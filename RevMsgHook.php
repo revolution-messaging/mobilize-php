@@ -52,24 +52,24 @@ class RevMsgHook {
 	}
 	
 	public function stripText(){
-		$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i',null,$this->inputs['mobileText']);
+		$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i','',$this->inputs['mobileText']);
 	}
 	
 	public function retreiveinputs($method){
-		if($method=='get'){
+		if($method=='get') {
 			$d=$_GET;
-		}elseif($method=='post'){
+		} else if($method=='post') {
 			file_get_contents('php://input');
-			if($this->format=='xml'){
+			if($this->format=='xml') {
 				$d = new SimpleXMLElement($d);
-			}elseif($this->format=='json'){
+			} else if($this->format=='json') {
 				$d = json_decode($d,true);
 			}
 		}
-		foreach($d as $var => $val){
+		foreach($d as $var => $val) {
 			if(in_array($var,array_keys($this->inputs)))
 				$this->inputs[$var] = $val;
-			}
+		}
 		$this->stripText();
 	}
 	
