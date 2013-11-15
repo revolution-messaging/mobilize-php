@@ -16,8 +16,7 @@ class RevMsgHook {
 		'metadataId'   => null,
 		'oldValue'     => array(),
 		'newValue'     => null
-		);
-	
+	);
 	
 	private function ttruncat($text, $number) {
 		if (strlen($text) > $number) {
