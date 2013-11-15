@@ -19,11 +19,11 @@ class RevMsgHook {
 		);
 	
 	
-	private function ttruncat($text,$numb) {
-		if (strlen($text) > $numb) {
-			$text = substr($text, 0, $numb);
+	private function ttruncat($text, $number) {
+		if (strlen($text) > $number) {
+			$text = substr($text, 0, $number);
 			$text = substr($text,0,strrpos($text," "));
-			$etc = null;
+			$etc = '';
 			$text = $text.$etc;
 		}
 		return $text; 
