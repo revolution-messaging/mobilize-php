@@ -1,15 +1,5 @@
 <?php
 
-function ttruncat($text,$numb) {
-	if (strlen($text) > $numb) {
-		$text = substr($text, 0, $numb);
-		$text = substr($text,0,strrpos($text," "));
-		$etc = null;
-		$text = $text.$etc;
-	}
-	return $text; 
-}
-
 class RevMsgHook {
 	protected $endSession = true;
 	protected $response = null;
@@ -29,6 +19,16 @@ class RevMsgHook {
 		);
 	
 	
+	private function ttruncat($text,$numb) {
+		if (strlen($text) > $numb) {
+			$text = substr($text, 0, $numb);
+			$text = substr($text,0,strrpos($text," "));
+			$etc = null;
+			$text = $text.$etc;
+		}
+		return $text; 
+	}
+
 	public function __construct($format='xml',$method='post'){
 		$this->format = $format;
 		$this->method = $method;
@@ -89,11 +89,11 @@ class RevMsgHook {
 	public function outputDC() {
 		switch($this->format){
 		case 'xml':
-			return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars(ttruncat($this->response,160))."</response></dynamiccontent>";
+			return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars($this->ttruncat($this->response,160))."</response></dynamiccontent>";
 		case 'json':
 			return json_encode(array(
 				'endSession'=>$this->getEndSession(),
-				'response'=>ttruncat($this->response,160)
+				'response'=>$this->ttruncat($this->response,160)
 			));
 		}
 	}
