@@ -35,11 +35,11 @@ class RevMsgHook {
 		$this->retreiveinputs($this->method);
 	}
 	
-	public function changemsg($msg){
+	public function changeMsg($msg){
 		$this->response = $msg;
 	}
 	
-	public function changeend($end=true) {
+	public function changeEnd($end=true) {
 		$this->endSession = $end;
 	}
 	
@@ -55,7 +55,7 @@ class RevMsgHook {
 		$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i','',$this->inputs['mobileText']);
 	}
 	
-	public function retreiveinputs($method){
+	public function retreiveInputs($method){
 		if($method=='get') {
 			$d=$_GET;
 		} else if($method=='post') {
@@ -73,7 +73,7 @@ class RevMsgHook {
 		$this->stripText();
 	}
 	
-	public function getinputs(){
+	public function getInputs(){
 		return $this->inputs;
 	}
 	
@@ -88,13 +88,14 @@ class RevMsgHook {
 	
 	public function outputDC() {
 		switch($this->format){
-		case 'xml':
-			return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars($this->ttruncat($this->response,160))."</response></dynamiccontent>";
-		case 'json':
-			return json_encode(array(
-				'endSession'=>$this->getEndSession(),
-				'response'=>$this->ttruncat($this->response,160)
-			));
+			case 'xml':
+			default:
+				return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars($this->ttruncat($this->response,160))."</response></dynamiccontent>";
+			case 'json':
+				return json_encode(array(
+					'endSession'=>$this->getEndSession(),
+					'response'=>$this->ttruncat($this->response,160)
+				));
 		}
 	}
 }
