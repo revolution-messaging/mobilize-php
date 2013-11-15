@@ -86,7 +86,7 @@ class RevMsgHook {
 		}
 	}
 	
-	public function outputDC() {
+	public function outputDynamicContent() {
 		switch($this->format){
 			case 'xml':
 			default:
