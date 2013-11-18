@@ -1,15 +1,5 @@
 <?php
 
-function ttruncat($text,$numb) {
-	if (strlen($text) > $numb) {
-		$text = substr($text, 0, $numb);
-		$text = substr($text,0,strrpos($text," "));
-		$etc = null;
-		$text = $text.$etc;
-	}
-	return $text; 
-}
-
 class RevMsgHook {
 	protected $endSession = true;
 	protected $response = null;
@@ -26,20 +16,29 @@ class RevMsgHook {
 		'metadataId'   => null,
 		'oldValue'     => array(),
 		'newValue'     => null
-		);
+	);
 	
-	
+	private function text_truncate($text, $number) {
+		if (strlen($text) > $number) {
+			$text = substr($text, 0, $number);
+			$text = substr($text,0,strrpos($text," "));
+			$etc = '';
+			$text = $text.$etc;
+		}
+		return $text; 
+	}
+
 	public function __construct($format='xml',$method='post'){
 		$this->format = $format;
 		$this->method = $method;
 		$this->retreiveinputs($this->method);
 	}
 	
-	public function changemsg($msg){
+	public function changeMsg($msg){
 		$this->response = $msg;
 	}
 	
-	public function changeend($end=true) {
+	public function changeEnd($end=true) {
 		$this->endSession = $end;
 	}
 	
@@ -52,28 +51,28 @@ class RevMsgHook {
 	}
 	
 	public function stripText(){
-		$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i',null,$this->inputs['mobileText']);
+		$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i','',$this->inputs['mobileText']);
 	}
 	
-	public function retreiveinputs($method){
-		if($method=='get'){
+	public function retreiveInputs($method){
+		if($method=='get') {
 			$d=$_GET;
-		}elseif($method=='post'){
+		} else if($method=='post') {
 			file_get_contents('php://input');
-			if($this->format=='xml'){
+			if($this->format=='xml') {
 				$d = new SimpleXMLElement($d);
-			}elseif($this->format=='json'){
+			} else if($this->format=='json') {
 				$d = json_decode($d,true);
 			}
 		}
-		foreach($d as $var => $val){
+		foreach($d as $var => $val) {
 			if(in_array($var,array_keys($this->inputs)))
 				$this->inputs[$var] = $val;
-			}
+		}
 		$this->stripText();
 	}
 	
-	public function getinputs(){
+	public function getInputs(){
 		return $this->inputs;
 	}
 	
@@ -86,15 +85,16 @@ class RevMsgHook {
 		}
 	}
 	
-	public function outputDC() {
+	public function outputDynamicContent() {
 		switch($this->format){
-		case 'xml':
-			return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars(ttruncat($this->response,160))."</response></dynamiccontent>";
-		case 'json':
-			return json_encode(array(
-				'endSession'=>$this->getEndSession(),
-				'response'=>ttruncat($this->response,160)
-			));
+			case 'xml':
+			default:
+				return "<dynamiccontent><endSession>".$this->getEndSession(true)."</endSession><response>".htmlspecialchars($this->text_truncate($this->response,160))."</response></dynamiccontent>";
+			case 'json':
+				return json_encode(array(
+					'endSession'=>$this->getEndSession(),
+					'response'=>$this->text_truncate($this->response,160)
+				));
 		}
 	}
 }
