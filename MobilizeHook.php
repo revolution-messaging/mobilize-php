@@ -119,7 +119,7 @@ class MobilizeHook {
 				}
 		}
 		$this->setInputs($d);
-		$this->stripText();
+		return $this->stripText();
 	}
 	
 	public function getInputs() {
@@ -127,9 +127,13 @@ class MobilizeHook {
 	}
 	
 	public function setInputs($arr) {
-		foreach($arr as $var => $val) {
-			$this->setInput($var, $val);
-		}
+		if(is_array($arr)) {
+			foreach($arr as $var => $val) {
+				$this->setInput($var, $val);
+			}
+			return true;
+		} else
+			return false;
 	}
 	
 	public function setInput($var, $val) {
@@ -153,4 +157,3 @@ class MobilizeHook {
 		}
 	}
 }
-?>
