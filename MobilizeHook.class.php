@@ -1,10 +1,10 @@
 <?php
 
 class MobilizeHook {
-	protected $endSession = true;
+	protected $endSession = false;
 	protected $response = null;
-	protected $format = null;
-	protected $method = null;
+	protected $format = 'xml';
+	protected $method = 'post';
 	protected $inputs = array(
 		'strippedText' 	=> null,
 		'msisdn'       	=> null,
@@ -40,14 +40,11 @@ class MobilizeHook {
 	
 	public function setMethod($method='post') {
 		$method = trim(strtolower($method));
-		switch ($method) {
-			case 'get':
-				$this->method = $method;
-				break;
-			case 'post':
-			default:
-				$this->format = 'post';
-		}
+		if($method=='get' || $method=='post') {
+			$this->method = $method;
+			return true;
+		} else
+			return false;
 	}
 	
 	public function getFormat() {
@@ -56,14 +53,11 @@ class MobilizeHook {
 	
 	public function setFormat($format='xml') {
 		$format = trim(strtolower($format));
-		switch ($format) {
-			case 'json':
-				$this->format = $format;
-				break;
-			case 'xml':
-			default:
-				$this->format = 'xml';
-		}
+		if($format=='xml' || $format=='json') {
+			$this->format = $format;
+			return true;
+		} else
+			return false;
 	}
 	
 	public function getEnd() {
@@ -71,9 +65,10 @@ class MobilizeHook {
 	}
 	
 	public function setEnd($end=true) {
-		$this->endSession = false;
 		if($end)
 			$this->endSession = true;
+		else
+			$this->endSession = false;
 	}
 	
 	public function getResponse() {
