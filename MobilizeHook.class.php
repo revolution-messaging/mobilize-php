@@ -1,10 +1,10 @@
 <?php
 
 class MobilizeHook {
-	protected $endSession = true;
+	protected $endSession = false;
 	protected $response = null;
-	protected $format = null;
-	protected $method = null;
+	protected $format = 'xml';
+	protected $method = 'post';
 	protected $responseLength = 160;
 	protected $inputs = array(
 		'msisdn'		=> null,
@@ -22,7 +22,7 @@ class MobilizeHook {
 		$this->setFormat($format);
 		$this->setMethod($method);
 		if($retrieve)
-			$this->retrieveInputs($this->method);
+			$this->retrieveInputs();
 	}
 	
 	private function textTruncate($text, $numb) {
@@ -45,14 +45,11 @@ class MobilizeHook {
 	
 	public function setMethod($method='post') {
 		$method = trim(strtolower($method));
-		switch ($method) {
-			case 'get':
-				$this->method = $method;
-				break;
-			case 'post':
-			default:
-				$this->format = 'post';
-		}
+		if($method=='get' || $method=='post') {
+			$this->method = $method;
+			return true;
+		} else
+			throw new Exception('You must specify "get" or "post".');
 	}
 	
 	public function getFormat() {
@@ -61,14 +58,11 @@ class MobilizeHook {
 	
 	public function setFormat($format='xml') {
 		$format = trim(strtolower($format));
-		switch ($format) {
-			case 'json':
-				$this->format = $format;
-				break;
-			case 'xml':
-			default:
-				$this->format = 'xml';
-		}
+		if($format=='xml' || $format=='json') {
+			$this->format = $format;
+			return true;
+		} else
+			throw new Exception('You must specify "xml" or "json".');
 	}
 	
 	public function getEnd() {
@@ -76,9 +70,10 @@ class MobilizeHook {
 	}
 	
 	public function setEnd($end=true) {
-		$this->endSession = false;
 		if($end)
 			$this->endSession = true;
+		else
+			$this->endSession = false;
 	}
 	
 	public function getResponse() {
@@ -92,8 +87,8 @@ class MobilizeHook {
 			$this->response = $message;
 	}
 	
-	public function retrieveInputs($method='get'){
-		$this->setMethod($method);
+	public function retrieveInputs($method=null){
+		if($method) $this->setMethod($method);
 		switch ($this->getMethod()) {
 			case 'get':
 				if(isset($_GET) && !empty($_GET))
@@ -150,12 +145,12 @@ class MobilizeHook {
 	public function output() {
 		switch($this->format) {
 			case 'xml':
-				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->textTruncate($this->response, $this->responseLength))."</response></dynamiccontent>";
+				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->response, $this->responseLength)."</response></dynamiccontent>";
 			case 'json':
 				return json_encode(array(
 					'endSession'=>$this->getEnd(),
-					'response'=>$this->textTruncate($this->response, $this->responseLength)
-				));
+					'response'=>$this->response, $this->responseLength)
+				);
 		}
 	}
 }
