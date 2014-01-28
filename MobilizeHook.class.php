@@ -5,18 +5,26 @@ class MobilizeHook {
 	protected $response = null;
 	protected $format = null;
 	protected $method = null;
+	protected $responseLength = 160;
 	protected $inputs = array(
-		'strippedText' 	=> null,
-		'msisdn'       	=> null,
-		'mobileText'  	=> null,
-		'keywordName' 	=> null,
-		'keywordId'   	=> null,
-		'shortCode'   	=> null,
-		'subscriberId' => null,                  
-		'metadataId'   => null,
-		'oldValue'     => array(),
-		'newValue'     => null
+		'cleanText'		=> null,
+		'msisdn'		=> null,
+		'mobileText'	=> null,
+		'keywordName'	=> null,
+		'keywordId'		=> null,
+		'shortCode'		=> null,
+		'subscriberId'	=> null,                  
+		'metadataId'	=> null,
+		'oldValue'		=> array(),
+		'newValue'		=> null
 	);
+	
+	public function __construct($format='xml', $method='post', $retrieve=true) {
+		$this->setFormat($format);
+		$this->setMethod($method);
+		if($retrieve)
+			$this->retrieveInputs($this->method);
+	}
 	
 	private function textTruncate($text, $numb) {
 		if(strlen($text) > $numb) {
@@ -28,10 +36,8 @@ class MobilizeHook {
 		return $text; 
 	}
 	
-	public function __construct($format='xml', $method='post') {
-		$this->setFormat($format);
-		$this->setMethod($method);
-		$this->retrieveInputs($this->method);
+	public function cleanMobileText($keyword, $mobileText) {
+		return trim(preg_replace('/^('.$keyword.'\s)/i','',$mobileText));
 	}
 	
 	public function getMethod() {
@@ -80,46 +86,43 @@ class MobilizeHook {
 		return $this->response;
 	}
 	
-	public function setResponse($message) {
-		$this->response = $message;
-	}
-	
-	public function stripText() {
-		if($this->inputs['keywordName'] && $this->inputs['mobileText']) {
-			$this->inputs['strippedText'] = preg_replace('/^('.$this->inputs['keywordName'].'\s+)/i',null,$this->inputs['mobileText']);
-			return true;
-		} else
-			return false;
+	public function setResponse($message, $force=false) {
+		if(strlen($message)>$this->responseLength && !$force)
+			return false
+		else
+			$this->response = $message;
 	}
 	
 	public function retrieveInputs($method='get'){
 		$this->setMethod($method);
 		switch ($this->getMethod()) {
 			case 'get':
-				$d = $_GET;
+				if(isset($_GET) && !empty($_GET))
+					return $this->setInputs($_GET);
 				break;
 			case 'post':
 			default:
-				file_get_contents('php://input');
-				switch ($this->format)
-					case 'json':
-						try {
-							$d = json_decode($d, true);
-						} catch(Exception $e) {
-							throw new Exception($e->getMessage());
-						}
-						break;
-					case 'xml':
-					default:
-						try {
-							$d = new SimpleXMLElement($d);
-						} catch(Exception $e) {
-							throw new Exception($e->getMessage());
-						}
+				$d = file_get_contents('php://input');
+				if($d) {
+					switch ($this->format) {
+						case 'json':
+							try {
+								$d = json_decode($d, true);
+							} catch(Exception $e) {
+								throw new Exception($e->getMessage());
+							}
+							break;
+						case 'xml':
+						default:
+							try {
+								$d = new SimpleXMLElement($d);
+							} catch(Exception $e) {
+								throw new Exception($e->getMessage());
+							}
+					}
 				}
+				return $this->setInputs($d);
 		}
-		$this->setInputs($d);
-		return $this->stripText();
 	}
 	
 	public function getInputs() {
@@ -137,7 +140,7 @@ class MobilizeHook {
 	}
 	
 	public function setInput($var, $val) {
-		if(in_array($var, array_keys($this->inputs)) && (gettype($val) == gettype($this->inputs[$var]))) {
+		if(array_key_exists($var, $this->inputs) && (gettype($val) == gettype($this->inputs[$var]))) {
 			$this->inputs[$var] = $val;
 			return true;
 		} else {
@@ -146,14 +149,14 @@ class MobilizeHook {
 	}
 	
 	public function output() {
-		switch($this->format){
-		case 'xml':
-			return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->textTruncate($this->response, 160))."</response></dynamiccontent>";
-		case 'json':
-			return json_encode(array(
-				'endSession'=>$this->getEnd(),
-				'response'=>ttruncat($this->response,160)
-			));
+		switch($this->format) {
+			case 'xml':
+				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->textTruncate($this->response, $this->responseLength))."</response></dynamiccontent>";
+			case 'json':
+				return json_encode(array(
+					'endSession'=>$this->getEnd(),
+					'response'=>$this->textTruncate($this->response, $this->responseLength)
+				));
 		}
 	}
 }
