@@ -7,7 +7,6 @@ class MobilizeHook {
 	protected $method = null;
 	protected $responseLength = 160;
 	protected $inputs = array(
-		'cleanText'		=> null,
 		'msisdn'		=> null,
 		'mobileText'	=> null,
 		'keywordName'	=> null,
