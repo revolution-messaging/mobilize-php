@@ -8,12 +8,12 @@ class MobilizeHook {
 	protected $responseLength = 160;
 	protected $inputs = array(
 		'msisdn'		=> null,
-		'mobileText'	=> null,
-		'keywordName'	=> null,
+		'mobileText'		=> null,
+		'keywordName'		=> null,
 		'keywordId'		=> null,
 		'shortCode'		=> null,
-		'subscriberId'	=> null,                  
-		'metadataId'	=> null,
+		'subscriberId'		=> null,                  
+		'metadataId'		=> null,
 		'oldValue'		=> array(),
 		'newValue'		=> null
 	);
