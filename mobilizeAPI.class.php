@@ -4,120 +4,126 @@ use Guzzle\Plugin\Cookie\CookiePlugin;
 use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 
 interface model				{
+	public function isDirty		();
 	public function setVariable	($name, $val);
+	public function setVariables	($set);
 	public function getVariable	($name);
 	public function getVariables	();
 	public function	getOptions	($name);
 }
 
 interface object			{
-	public function delete          ();
-	public function retrieve        ($id);
-	public function update          ();
-	public function create          ();
+	public function delete          ($session,$version);
+	public function retrieve        ($id, $session,$version);
+	public function update          ($session,$version);
+	public function create          ($session,$version);
 }
 
 class platformObject implements object	{
-	protected $isDirty	=	true;
-	public function delete 		(){
-		$this->isDirty	=	false;
+	
+	public function delete 		($session,$version='v1'){
 		if (!isset($this->urls['delete'])){
-			//exception: object cannot be deleted;
+			throw new Exception('object cannot be deleted');
 		}else{
-			//Guzzle request
+			$request	=	$session()->delete($this->urls[$version]['create'].'/'.$id,null,json_encode($this->scheme->getVariables()));
+			$response	=	$request->send();
+			$this->scheme->isDirty	=	true;
 		}
 		//return statusCode & content
 	}
 	
-	public function retrieve	($id){
-		$this->isDirty	=	false;
-		if (!isset($this->urls['retrieve'])){
-			//exception: object cannot be deleted;
+	public function retrieve	($id,$session,$version='v1'){ //complete
+		if (!isset($this->urls['v1']['retrieve'])){
+			throw new Exception('object cannot be retrieved');
 		}else{
-			//Guzzle request
+			$request	=	$session()->get($this->urls[$version]['create'].'/'.$id);
+			$response	=	$request->send();
+			if($response->getStatusCode() < 400){
+				$data = json_decode($response->getBody(),true);
+				$this->scheme->setVariables($data);
+				$this->scheme->isDirty	=	false;
+				return $this;
+			}else{
+				throw new Exception($response->getStatusCode().': '.$response->getBody());
+				return false;
+			}
 		}
-		//return statusCode & content
-	
 	}
 	
-	public function update		(){
+	public function update		($session,$version='v1'){
 		$this->isDirty	=	false;
 		if (!isset($this->urls['update'])){
-			//exception: object cannot be deleted;
+			throw new Exception('object cannot be updated');
 		}else{
-			//Guzzle request
+			$request	=	$session()->put($this->urls[$version]['create'].'/'.$id,null,json_encode($this->scheme->getVariables()));
+			$response	=	$request->send();
+			$this->scheme->isDirty	=	false;
 		}
 		//return statusCode & content
 	}
 	
-	public function create		(){
+	public function create		($session,$version='v1'){
 		$this->isDirty	=	false;
 		if (!isset($this->urls['create'])){
-			//exception: object cannot be deleted;
+			throw new Exception('object cannot be created');
 		}else{
-			//Guzzle request
+			$request	=	$session()->post($this->urls[$version]['create'],null,json_encode($this->scheme->getVariables()));
+			$response	=	$request->send();
+			$this->scheme->isDirty	=	false;
 		}
 		//return statusCode & content
-	}
-	
-	public function isDirty		(){
-		return $this->isDirty;
 	}
 }
 
 class subscriber extends platformObject{
+	public $scheme		=	null;
 	protected $urls		=	array(
 		'v1'		=>	array(
-			'retrieve'	=>	'',
-			'create'	=>	'',
-			'update'	=>	'',
-			'delete'	=>	''
+			'retrieve'	=>	'v1/subscriber',
 			),
 		'v2'		=>	array(
 			)
 		);
 	public function __construct($model=array()){
-		$this->$scheme		=	new scheme_subscriber;
+		$this->scheme		=	new scheme_subscriber;
 		if(!empty($model)){
 			foreach($model as $variable => $value){
 				$this->scheme->setVariable($variable,$value);
 			}
-		}else{
-			$this->isDirty = false;
 		}
 	}
 }
 
 class metadata extends platformObject	{
+	public $scheme		=	null;
 	protected $urls		=	array(
 		'v1'		=>	array(
-			'retrieve'	=>	'',
-			'create'	=>	'',
-			'update'	=>	'',
-			'delete'	=>	''
+			'retrieve'	=>	'v1/metadata',
+			'create'	=>	'v1/metadata',
+			'update'	=>	'v1/metadata',
+			'delete'	=>	'v1/metadata'
 			),
 		'v2'		=>	array(
 			)
 		);
 	public function __construct($model=array()){
-		$this->$scheme		=	new scheme_metadata;
+		$this->scheme		=	new scheme_metadata;
 		if(!empty($model)){
 			foreach($model as $variable => $value){
 				$this->scheme->setVariable($variable,$value);
 			}
-		}else{
-			$this->isDirty = false;
 		}
 	}
 }
 
 class filter extends platformObject	{  
+	public $scheme		=	null;
 	protected $urls		=	array(
 		'v1'		=>	array(
-			'retrieve'	=>	'',
-			'create'	=>	'',
-			'update'	=>	'',
-			'delete'	=>	''
+			'retrieve'	=>	'v1/filter',
+			'create'	=>	'v1/filter',
+			'update'	=>	'v1/filter',
+			'delete'	=>	'v1/filter'
 			),
 		'v2'		=>	array(
 			'create'	=>	'',
@@ -125,13 +131,11 @@ class filter extends platformObject	{
 			)
 		);
 	public function __construct($model=array()){
-		$this->$scheme		=	new scheme_filter;
+		$this->scheme		=	new scheme_filter;
 		if(!empty($model)){
 			foreach($model as $variable => $value){
 				$this->scheme->setVariable($variable,$value);
 			}
-		}else{
-			$this->isDirty = false;
 		}
 	}
 }
@@ -141,9 +145,9 @@ class authentication extends platformObject	{
 	public $scheme		=	null;
 	protected $urls		=	array(
 		'v1'		=>	array(
-			'retrieve'	=>	'',
+			'retrieve'	=>	'v1/authenticate/whoami',
 			'create'	=>	'v1/authenticate',
-			'delete'	=>	''
+			'delete'	=>	'v1/authenticate/logout'
 			),
 		'v2'		=>	array(
 			'create'	=>	'',
@@ -151,24 +155,43 @@ class authentication extends platformObject	{
 			)
 		);
 	
-	public function create		(){
-		$request	=	$this->client->post($this->urls['v1']['create'],null,json_encode($this->scheme->getVariables()));
+	public function create		($session=null,$version='v1'){
+		$request	=	$this->client->post($this->urls[$version]['create'],null,json_encode($this->scheme->getVariables()));
 		$response	=	$request->send();
+	}
+	
+	public function retrieve	($id=null,$session=null,$version='v1'){ //complete
+		if (!isset($this->urls['v1']['retrieve'])){
+			throw new Exception('object cannot be retrieved');
+		}else{
+			$request	=	$this->client->get($this->urls[$version]['retrieve']);
+			$response	=	$request->send();
+			if($response->getStatusCode() < 400){
+				return json_decode($response->getBody(),true);
+			}else{
+				throw new Exception($response->getStatusCode().': '.$response->getBody());
+				return false;
+			}
+		}
+	}
+	
+	public function __invoke(){
+		if(!isset($this->client) || empty($this->client)){
+			throw new Exception('No session active. Reauthenticate.');
+		}else{
+			return($this->client);
+		}
 	}
 	
 	public function __construct($model=array()){
 		$this->scheme		=	new scheme_authentication;
 		if(!empty($model) && isset($model)){
-			foreach($model as $variable => $value){
-				$this->scheme->setVariable($variable,$value);
-			}
-		}else{
-			$this->isDirty = false;
+			$this->scheme->setVariables($model);
 		}
 		$this->client	=	new Client('http://revolutionmsg.com/api',array(
 			'request.options'	=>	array(
 				'headers'	=>	array(
-					'Accept-Type'	=>	'application/json',
+					'Accept'	=>	'application/json',
 					'Content-Type'	=>	'application/json'
 					)
 				)
@@ -182,13 +205,26 @@ class authentication extends platformObject	{
 }
 
 //MODELS
-class scheme implements model	{ 
+class scheme implements model	{
+	public  $isDirty		=	false;
+	
+	public function isDirty(){
+		return $this->isDirty;
+	}
+	
 	public function setVariable	($name, $val){
-		if(key_exists($name,$this->vars) && (!key_exists($name,$this->options) || in_array($value,$this->options[$name]))){
+		if(key_exists($name,$this->vars) && (!key_exists($name,$this->options) || in_array($val,$this->options[$name]))){
 			$this->vars[$name] = $val;
+			$this->isDirty = true;
 			return true;
 		}else{
 			return false;
+		}
+	}
+	
+	public function setVariables ($set){
+		foreach($set as $name => $value){
+			$this->setVariable($name,$value);
 		}
 	}
 	                                                                 
@@ -287,28 +323,4 @@ class scheme_impersonate extends scheme		{
 		'user'		=>	null
 		);
 }
-
-/*class authentication extends platformObject	{
-	public $scheme			=	new scheme_authentication();
-	public $client			=	null;
-	public $status			=	null;
-	public function __construct ($u=null,$p=null){
-		$this->u = $u;
-		$this->p = $p;
-		if ($response = new client('/v1/authenticate',array(
-			'headers' => array()))){
-		$this->client = $response;
-		$this->status = $response->getStatusCode();
-			}
-	}
-}
-
-class MobilizeAPI {
-	protected $client	=	new Client('http://revolutionmsg.com');
-	protected $subscriber	=	null;
-	public function __construct	($u=null,$p=null){
-		$auth = new authentication($u,$p);
-	}
-}
-*/
 ?>
