@@ -10,7 +10,7 @@ interface object			{
 	public function retrieve        ($id, $session,$version);
 	public function update          ($session,$version);
 	public function create          ($session,$version);
-	public function __construct	($signifier);
+	public function __construct	($session,$signifier);
 	public function __set		($name,$value);
 	public function set		($name,$value);
 	public function __toString	();
@@ -18,16 +18,21 @@ interface object			{
 
 class platformObject implements object	{
 	protected $model		=	null;
-	
+	protected $client		=	null;
 	public function isDirty(){
 		return $this->model->isDirty();
 	}
 	
-	public function delete 		($session,$version='v1'){
+	public function delete 		($version='v1',$session=null){
+		if (!is_null($session)){
+			$this->client  = $session;
+		}
+		if (!isset($this->client) || is_null($this->client))
+			throw new Exception('no active session. Reauthenticate.');
 		if (!isset($this-> urls[$version]['delete'])){
 			throw new Exception('object cannot be deleted');
 		}else{
-			$request	=	$session()-> delete($this-> urls[$version]['delete'].'/'.$this->model->getVariable('id'));
+			$request	=	$this->client()-> delete($this-> urls[$version]['delete'].'/'.$this->model->getVariable('id'));
 			$response	=	$request-> send();
 			if($response-> getStatusCode() < 400){
 				$this-> model-> isDirty	=	true;
@@ -39,11 +44,11 @@ class platformObject implements object	{
 		}
 	}
 	
-	public function retrieve	($id,$session,$version='v1'){ //complete
+	public function retrieve	($id,$version='v1',$session=null){ //complete
 		if (!isset($this-> urls[$version]['retrieve'])){
 			throw new Exception('object cannot be retrieved');
 		}else{
-			$request	=	$session()-> get($this-> urls[$version]['retrieve'].'/'.$id);
+			$request	=	$this->client()-> get($this-> urls[$version]['retrieve'].'/'.$id);
 			$response	=	$request-> send();
 			if($response-> getStatusCode() < 400){
 				$data = json_decode($response-> getBody(),true);
@@ -57,11 +62,11 @@ class platformObject implements object	{
 		}
 	}
 	
-	public function update		($session,$version='v1'){
+	public function update		($version='v1',$session=null){
 		if (!isset($this->urls[$version]['update'])){
 			throw new \Exception('object cannot be updated');
 		}else{
-			$request	=	$session()-> put($this-> urls[$version]['update'].'/'.$this->model->getVariable('id'),null,json_encode($this->model->getVariables()));
+			$request	=	$this->client()-> put($this-> urls[$version]['update'].'/'.$this->model->getVariable('id'),null,json_encode($this->model->getVariables()));
 			$response	=	$request-> send();
 			if($response-> getStatusCode() < 400){
 				$this-> model-> isDirty	=	false;
@@ -73,12 +78,12 @@ class platformObject implements object	{
 		}
 	}
 	
-	public function create		($session,$version='v1'){
+	public function create		($version='v1',$session=null){
 		$this-> isDirty	=	false;
 		if (!isset($this-> urls[$version]['create'])){
 			throw new Exception('object cannot be created');
 		}else{
-			$request	=	$session()-> post($this-> urls[$version]['create'],null,json_encode($this->model->getVariables()));
+			$request	=	$this->client()-> post($this-> urls[$version]['create'],null,json_encode($this->model->getVariables()));
 			$response	=	$request-> send();
 			if($response-> getStatusCode() < 400){
 				$this-> model-> isDirty	=	false;
@@ -103,15 +108,14 @@ class platformObject implements object	{
 		$this-> model-> setVariable($name,$val);
 	}
 	
-	public function __construct($signifier=array(),$session=null){
+	public function __construct($session=null,$signifier=array()){
 		$this->model		=	new $this->scheme;
+		$this->client		=	$session();
 		if(!empty($signifier)){
-			if(is_array($data)){
 				$this-> model-> setVariables($signifier);
 			}elseif(is_string($signifier) && isset($session)){
 				$this-> retrieve($signifier,$session);
 			}
-		}
 		return $this;
 	}
 }
@@ -199,12 +203,12 @@ class authentication extends platformObject	{
 			)
 		);
 	
-	public function create		($session=null,$version='v1'){
+	public function create		($version='v1',$session=null){
 		$request	=	$this-> client-> post($this-> urls[$version]['create'],null,json_encode($this-> model-> getVariables()));
 		$response	=	$request-> send();
 	}
 	
-	public function retrieve	($id=null,$session=null,$version='v1'){
+	public function retrieve	($id=null,$version='v1',$session=null){
 		if (!isset($this-> urls['v1']['retrieve'])){
 			throw new Exception('object cannot be retrieved');
 		}else{
@@ -219,22 +223,6 @@ class authentication extends platformObject	{
 		}
 	}
 	
-	/*public function update		($signifier, $version='v1'){
-		if (!isset($this->urls['v1']['update'])){
-			throw new \Exception('object cannot be updated');
-		}else{
-			$request	=	$session()-> post($this-> urls['v1']['update'].'/'.$signifier);
-			$response	=	$request-> send();
-			if($response-> getStatusCode() < 400){
-				$this-> model-> isDirty	=	false;
-				return $this;
-			}else{
-				throw new Exception($response-> getStatusCode().': '.$response-> getBody());
-				return false;
-			}
-		}
-	}*/
-	
 	public function __invoke(){
 		if(!isset($this-> client) || empty($this-> client)){
 			throw new Exception('No session active. Reauthenticate.');
@@ -243,23 +231,27 @@ class authentication extends platformObject	{
 		}
 	}
 	
-	public function __construct($signifier=array()){
+	public function __construct($session=null,$signifier=array()){
 		$this-> model		=	new model\authentication;
 		if(!empty($signifier) && isset($signifier)){
 			$this-> model-> setVariables($signifier);
 		}
-		$this-> client	=	new Client('http://revolutionmsg.com/api',array(
-			'request.options'	=>	array(
-				'headers'	=>	array(
-					'Accept'	=>	'application/json',
-					'Content-Type'	=>	'application/json'
+		if(isset($session) && is_null($session)){
+			$this->client	=	$session;
+		}else{
+			$this-> client	=	new Client('http://revolutionmsg.com/api',array(
+				'request.options'	=>	array(
+					'headers'	=>	array(
+						'Accept'	=>	'application/json',
+						'Content-Type'	=>	'application/json'
+						)
 					)
 				)
-			)
-		);
-		$this-> client-> setUserAgent('Revmsg/Mobilize');
-		$cookiePlugin = new CookiePlugin(new ArrayCookieJar());
-		$this-> client-> addSubscriber($cookiePlugin);
+			);
+			$this-> client-> setUserAgent('Revmsg/Mobilize');
+			$cookiePlugin = new CookiePlugin(new ArrayCookieJar());
+			$this-> client-> addSubscriber($cookiePlugin);
+		}
 	}
 	
 }
