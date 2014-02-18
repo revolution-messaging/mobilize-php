@@ -1,7 +1,8 @@
 #About the Mobilize Library
 
 PHP client library for the Mobilize SMS application from Revolution Messaging, LLC.
-This library consists of two classes: MobilizeAPI, a general-purpose class for interacting with the Mobilize messaging API, and MobilizeHook, for the creation of PHP scripts designed to work with Mobilize's web hooks. These two classes are often used together, though neither depends on the other.
+
+This library comes in two parts: the MobilizeHook Class, used to build webservices to receieve requests from the Mobilize platform, and the Mobilize API library, for using the API directly. These two parts do not depend on one another, but are often used in tandem.
 
 ##The MobilizeHook Class
 
@@ -65,3 +66,32 @@ Mobilize's Dynamic Content flow component sends a data payload to a given URL an
 * `getResponse()`: Returns the value of `response`
 * `setResponse(string)`: Sets the value of `response`
 * `output()`: Returns a properly-formatted Dynamic Content object, specifying endSession and response (response will be truncated to the last full word before reaching 160 characters).
+
+##Mobilize API Wrapper
+
+This wrapper allows for the manipulation of objects in the Mobilize platform directly, and requires authentication credentials for the platform in order to function. Contact info@revolutionmessaging.com to inquire about messaging plans.
+
+###General use
+Every type of object in the Mobilize platform is represented by a separate class, and instances of these classes may all be handled independantly. Objects may be instantiated in any of three ways:
+* `new /object/();`: Create an empty object locally
+* `new /object/(string);`: Pull an object from Mobilize with an ID matching the given string
+* `new /object/(array);`: Create an object locally whose properties match those in the array
+Properties of objects may be changed as follows:
+* `$object->/property/ = /value/`: set /property/ of the object to /value/, provided /value/ is valid and /property/ exists.
+* `$object->setVariables(array)`: set all values of the object to match those in the array
+* `$object->set(/property/,/value/)`: set /property/ of the object to /value/, provided /value/ is valid and /property/ exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
+Most objects have methods corresponding to CRUD operations, where supported (more to come):
+
+###Authentication
+The first step in using the API is creating an authenticated session. 
+```
+use Revmsg\Mobilize
+$session = new Object\authentication();
+$session->set('username',/username/)->set('password',/password/)->create();
+```
+This session will be passed to methods defined in other classes.
+
+###Lists
+###Metadata
+
+
