@@ -73,13 +73,13 @@ This wrapper allows for the manipulation of objects in the Mobilize platform dir
 
 ###General use
 Every type of object in the Mobilize platform is represented by a separate class, and instances of these classes may all be handled independantly. Objects may be instantiated in any of three ways:
-* `new /object/();`: Create an empty object locally
-* `new /object/(string);`: Pull an object from Mobilize with an ID matching the given string
-* `new /object/(array);`: Create an object locally whose properties match those in the array
+* `new *object*();`: Create an empty object locally
+* `new *object*(string);`: Pull an object from Mobilize with an ID matching the given string
+* `new *object*(array);`: Create an object locally whose properties match those in the array
 Properties of objects may be changed as follows:
-* `$object->/property/ = /value/`: set /property/ of the object to /value/, provided /value/ is valid and /property/ exists.
+* `$object->*property* = *value*`: set *property* of the object to *value*, provided *value* is valid and *property* exists.
 * `$object->setVariables(array)`: set all values of the object to match those in the array
-* `$object->set(/property/,/value/)`: set /property/ of the object to /value/, provided /value/ is valid and /property/ exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
+* `$object->set(*property*,*value*)`: set *property* of the object to *value*, provided *value* is valid and *property* exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
 Most objects have methods corresponding to CRUD operations, where supported (more to come):
 
 ###Authentication
@@ -87,7 +87,7 @@ The first step in using the API is creating an authenticated session.
 ```
 use Revmsg\Mobilize
 $session = new Object\authentication();
-$session->set('username',/username/)->set('password',/password/)->create();
+$session->set('username',*username*)->set('password',*password*)->create();
 ```
 This session will be passed to methods defined in other classes.
 
