@@ -73,9 +73,9 @@ This wrapper allows for the manipulation of objects in the Mobilize platform dir
 
 ###General use
 Every type of object in the Mobilize platform is represented by a separate class, and instances of these classes may all be handled independantly. Objects may be instantiated in any of three ways:
-* `new *object*();`: Create an empty object locally
-* `new *object*(string);`: Pull an object from Mobilize with an ID matching the given string
-* `new *object*(array);`: Create an object locally whose properties match those in the array
+* `new _object_();`: Create an empty object locally
+* `new _object_(string);`: Pull an object from Mobilize with an ID matching the given string
+* `new _object_(array);`: Create an object locally whose properties match those in the array
 Properties of objects may be changed as follows:
 * `$object->*property* = *value*`: set *property* of the object to *value*, provided *value* is valid and *property* exists.
 * `$object->setVariables(array)`: set all values of the object to match those in the array
