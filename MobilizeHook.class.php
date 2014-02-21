@@ -7,7 +7,7 @@ class MobilizeHook {
 	protected $method = 'post';
 	protected $responseLength = 160;
 	protected $inputs = array(
-		'msisdn'		=> '',
+		'msisdn'		=> '',                        
 		'mobileText'		=> '',
 		'keywordName'		=> '',
 		'keywordId'		=> '',
@@ -16,7 +16,7 @@ class MobilizeHook {
 		'metadataId'		=> '',
 		'oldValue'		=> array(),
 		'newValue'		=> ''
-	);
+	); 
 	
 	public function __construct($format='xml', $method='post', $retrieve=true) {
 		$this->setFormat($format);
@@ -35,9 +35,13 @@ class MobilizeHook {
 		return $text; 
 	}
 	
-	public function cleanMobileText($keyword, $mobileText) {
+	public function cleanMobileText($keyword=null,$mobileText=null) {
+		if (is_null($keyword))
+			$keyword = $this->inputs['keywordName'];
+		if (is_null($mobileText))
+			$mobileText = $this->inputs['mobileText'];
 		return trim(preg_replace('/^('.$keyword.'\s)/i','',$mobileText));
-	}
+	}                       
 	
 	public function getMethod() {
 		return $this->method;
