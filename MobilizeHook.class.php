@@ -7,15 +7,15 @@ class MobilizeHook {
 	protected $method = 'post';
 	protected $responseLength = 160;
 	protected $inputs = array(
-		'msisdn'		=> null,
-		'mobileText'		=> null,
-		'keywordName'		=> null,
-		'keywordId'		=> null,
-		'shortCode'		=> null,
-		'subscriberId'		=> null,                  
-		'metadataId'		=> null,
+		'msisdn'		=> '',
+		'mobileText'		=> '',
+		'keywordName'		=> '',
+		'keywordId'		=> '',
+		'shortCode'		=> '',
+		'subscriberId'		=> '',                  
+		'metadataId'		=> '',
 		'oldValue'		=> array(),
-		'newValue'		=> null
+		'newValue'		=> ''
 	);
 	
 	public function __construct($format='xml', $method='post', $retrieve=true) {
@@ -82,7 +82,7 @@ class MobilizeHook {
 	
 	public function setResponse($message, $force=false) {
 		if(strlen($message)>$this->responseLength && !$force)
-			return false
+			return false;    
 		else
 			$this->response = $message;
 	}
