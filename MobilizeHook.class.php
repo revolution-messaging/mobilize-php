@@ -163,6 +163,7 @@ class MobilizeHook {
 				return json_encode(array(
 					'endSession'=>$this->getEnd(),
 					'response'=>$this->textTruncate($this->response, $this->responseLength)
+					)
 				);
 		}
 	}
