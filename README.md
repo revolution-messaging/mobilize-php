@@ -22,7 +22,7 @@ This class allows for easy access to the Mobilize webhooks which appear in:
 
 ###Instantiation
 
-Instantiation function: `new MobilizeHook(string $format=*xml|json, string $method=*post|get, bool $retrieve=*true|false, int $responseLength=*160);
+Instantiation function: `new MobilizeHook(string $format=*xml|json, string $method=*post|get, bool $retrieve=*true|false, int $responseLength=*160);`
 All arguments are optional; $format, $method and $responseLength set the respective property of the hook instance. $retrieve determines whether the hook will attempt to retrieve user inputs upon instantiation.
 
 ###Using Mobilize Data
