@@ -22,8 +22,11 @@ This class allows for easy access to the Mobilize webhooks which appear in:
 
 ###Instantiation
 
-Instantiation function: `new MobilizeHook(string $format=*xml|json, string $method=*post|get, bool $retrieve=*true|false, int $responseLength=*160);`
-All arguments are optional; $format, $method and $responseLength set the respective property of the hook instance. $retrieve determines whether the hook will attempt to retrieve user inputs upon instantiation.
+Instantiation function: `new MobilizeHook(format, method, retrieve, responseLength);`
+* `format` ('xml'|'json'): the format the instance will use to pull in data from the SMS request and to output dynamic content objects; defaults to 'xml'
+* `method` ('get'|'post'): the method by which data is being sent to the object from the SMS request; defaults to 'post'
+* `retrieve` (boolean): tells the object whether to pull in data from the SMS request upon instantiation; defaults to true
+* `responseLength` (int): sets the maximum length of a dynamic content response; defaults to the US standard of 160
 
 ###Using Mobilize Data
 
