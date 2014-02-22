@@ -18,9 +18,10 @@ class MobilizeHook {
 		'newValue'		=> ''
 	); 
 	
-	public function __construct($format='xml', $method='post', $retrieve=true) {
+	public function __construct($format='xml', $method='post', $retrieve=true, $responseLength=160) {
 		$this->setFormat($format);
 		$this->setMethod($method);
+		$this->setResponseLength($length);
 		if($retrieve)
 			$this->retrieveInputs();
 	}
@@ -146,14 +147,22 @@ class MobilizeHook {
 		}
 	}
 	
+	public function setResponseLength($val=160){
+		if (is_int($val)){
+			$this->responseLength = $val;
+		}else{
+			return false;
+		}
+	}
+	
 	public function output() {
 		switch($this->format) {
 			case 'xml':
-				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->response, $this->responseLength)."</response></dynamiccontent>";
+				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->textTruncate($this->response, $this->responseLength))."</response></dynamiccontent>";
 			case 'json':
 				return json_encode(array(
 					'endSession'=>$this->getEnd(),
-					'response'=>$this->response, $this->responseLength)
+					'response'=>$this->textTruncate($this->response, $this->responseLength)
 				);
 		}
 	}
