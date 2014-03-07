@@ -79,6 +79,7 @@ class MobilizeHook {
 			$this->endSession = true;
 		}else{
 			$this->endSession = false;
+		}
 	}
 	
 	public function getResponse() {
@@ -86,10 +87,11 @@ class MobilizeHook {
 	}
 	
 	public function setResponse($message, $force=false) {
-		if(strlen($message)>$this->responseLength && !$force)
+		if(strlen($message)>$this->responseLength && !$force){
 			return false;    
-		else
+		}else{
 			$this->response = $message;
+		}
 	}
 	
 	public function retrieveInputs($method=null){
@@ -134,8 +136,9 @@ class MobilizeHook {
 				$this->setInput($var, $val);
 			}
 			return true;
-		} else
+		} else{
 			return false;
+		}
 	}
 	
 	public function setInput($var, $val) {
