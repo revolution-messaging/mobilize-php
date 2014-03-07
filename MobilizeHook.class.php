@@ -21,7 +21,7 @@ class MobilizeHook {
 	public function __construct($format='xml', $method='post', $retrieve=true, $responseLength=160) {
 		$this->setFormat($format);
 		$this->setMethod($method);
-		$this->setResponseLength($length);
+		$this->setResponseLength($responseLength);
 		if($retrieve)
 			$this->retrieveInputs();
 	}
