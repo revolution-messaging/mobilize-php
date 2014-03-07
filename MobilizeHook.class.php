@@ -75,9 +75,9 @@ class MobilizeHook {
 	}
 	
 	public function setEnd($end=true) {
-		if($end)
+		if($end){
 			$this->endSession = true;
-		else
+		}else{
 			$this->endSession = false;
 	}
 	
