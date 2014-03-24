@@ -7,24 +7,25 @@ class MobilizeHook {
 	protected $method = 'post';
 	protected $responseLength = 160;
 	protected $inputs = array(
-		'msisdn'		=> null,
-		'mobileText'		=> null,
-		'keywordName'		=> null,
-		'keywordId'		=> null,
-		'shortCode'		=> null,
-		'subscriberId'		=> null,                  
-		'metadataId'		=> null,
+		'msisdn'		=> '',                        
+		'mobileText'		=> '',
+		'keywordName'		=> '',
+		'keywordId'		=> '',
+		'shortCode'		=> '',
+		'subscriberId'		=> '',                  
+		'metadataId'		=> '',
 		'oldValue'		=> array(),
-		'newValue'		=> null
-	);
-	
-	public function __construct($format='xml', $method='post', $retrieve=true) {
+		'newValue'		=> ''
+	); 
+
+	public function __construct($format='xml', $method='post', $retrieve=true, $responseLength=160) {
 		$this->setFormat($format);
 		$this->setMethod($method);
+		$this->setResponseLength($responseLength);
 		if($retrieve)
 			$this->retrieveInputs();
 	}
-	
+
 	private function textTruncate($text, $numb) {
 		if(strlen($text) > $numb) {
 			$text = substr($text, 0, $numb);
@@ -34,15 +35,19 @@ class MobilizeHook {
 		}
 		return $text; 
 	}
-	
-	public function cleanMobileText($keyword, $mobileText) {
+
+	public function cleanMobileText($keyword=null,$mobileText=null) {
+		if (is_null($keyword))
+			$keyword = $this->inputs['keywordName'];
+		if (is_null($mobileText))
+			$mobileText = $this->inputs['mobileText'];
 		return trim(preg_replace('/^('.$keyword.'\s)/i','',$mobileText));
-	}
-	
+	}                       
+
 	public function getMethod() {
 		return $this->method;
 	}
-	
+
 	public function setMethod($method='post') {
 		$method = trim(strtolower($method));
 		if($method=='get' || $method=='post') {
@@ -51,11 +56,11 @@ class MobilizeHook {
 		} else
 			throw new Exception('You must specify "get" or "post".');
 	}
-	
+
 	public function getFormat() {
 		return $this->format;
 	}
-	
+
 	public function setFormat($format='xml') {
 		$format = trim(strtolower($format));
 		if($format=='xml' || $format=='json') {
@@ -64,29 +69,31 @@ class MobilizeHook {
 		} else
 			throw new Exception('You must specify "xml" or "json".');
 	}
-	
+
 	public function getEnd() {
 		return $this->endSession;
 	}
-	
+
 	public function setEnd($end=true) {
-		if($end)
+		if($end){
 			$this->endSession = true;
-		else
+		}else{
 			$this->endSession = false;
+		}
 	}
-	
+
 	public function getResponse() {
 		return $this->response;
 	}
-	
+
 	public function setResponse($message, $force=false) {
-		if(strlen($message)>$this->responseLength && !$force)
-			return false
-		else
+		if(strlen($message)>$this->responseLength && !$force){
+			return false;    
+		}else{
 			$this->response = $message;
+		}
 	}
-	
+
 	public function retrieveInputs($method=null){
 		if($method) $this->setMethod($method);
 		switch ($this->getMethod()) {
@@ -118,21 +125,22 @@ class MobilizeHook {
 				return $this->setInputs($d);
 		}
 	}
-	
+
 	public function getInputs() {
 		return $this->inputs;
 	}
-	
+
 	public function setInputs($arr) {
 		if(is_array($arr)) {
 			foreach($arr as $var => $val) {
 				$this->setInput($var, $val);
 			}
 			return true;
-		} else
+		} else{
 			return false;
+		}
 	}
-	
+
 	public function setInput($var, $val) {
 		if(array_key_exists($var, $this->inputs) && (gettype($val) == gettype($this->inputs[$var]))) {
 			$this->inputs[$var] = $val;
@@ -141,15 +149,24 @@ class MobilizeHook {
 			return false;
 		}
 	}
-	
+
+	public function setResponseLength($val=160){
+		if (is_int($val)){
+			$this->responseLength = $val;
+		}else{
+			return false;
+		}
+	}
+
 	public function output() {
 		switch($this->format) {
 			case 'xml':
-				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->response, $this->responseLength)."</response></dynamiccontent>";
+				return "<dynamiccontent><endSession>".$this->getEnd(true)."</endSession><response>".htmlspecialchars($this->textTruncate($this->response, $this->responseLength))."</response></dynamiccontent>";
 			case 'json':
 				return json_encode(array(
 					'endSession'=>$this->getEnd(),
-					'response'=>$this->response, $this->responseLength)
+					'response'=>$this->textTruncate($this->response, $this->responseLength)
+					)
 				);
 		}
 	}
