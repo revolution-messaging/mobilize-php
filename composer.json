@@ -1,0 +1,19 @@
+{
+    "name": "revmsg/mobilize",
+    "description": "libraries for working with Revolution Messaging's Mobilize API",
+    "keywords": [],
+    "homepage": "https://github.com/revolution-messaging/mobilize-php",
+    "license": "Copyright",
+    "minimum-stability": "dev",
+    "authors": [
+      {
+        "name": "Revolution Messaging",
+        "email": "support@revolutionmessaging.com",
+        "homepage": "http://revolutionmessaging.com/"
+      }
+    ],
+    "require": {
+      "php": ">=5.3.0",
+      "guzzle/guzzle": "v3.8.1"
+    }
+}
