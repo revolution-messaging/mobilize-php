@@ -9,7 +9,8 @@
 
 namespace Revmsg\Mobilize;
 
-class Hook {
+class Hook
+{
     protected $endSession = false;
     protected $response = null;
     protected $format = 'xml';
