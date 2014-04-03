@@ -35,7 +35,6 @@ class Hook
         $this->setResponseLength($responseLength);
         if($retrieve)
             $this->retrieveInputs();
-        // return $this;
     }
 
     private function textTruncate($text, $numb) {
