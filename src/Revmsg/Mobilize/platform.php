@@ -126,23 +126,27 @@ class authentication extends platformObject	{
 		}
 	}
 	
-	public function __construct($signifier=array()){
+	public function __construct($signifier''=array()''){
 		$this-> model		=	new model\authentication;
 		if(!empty($signifier) && isset($signifier)){
-			$this-> model-> setVariables($signifier);
-		}
-		$this-> client	=	new Client('http://revolutionmsg.com/api',array(
-			'request.options'	=>	array(
-				'headers'	=>	array(
-					'Accept'	=>	'application/json',
-					'Content-Type'	=>	'application/json'
+			if (is_array($signifier)){
+				$this-> model-> setVariables($signifier);
+				$this-> client	=	new Client('http://revolutionmsg.com/api',array(
+				'request.options'	=>	array(
+					'headers'	=>	array(
+						'Accept'	=>	'application/json',
+						'Content-Type'	=>	'application/json'
+						)
 					)
 				)
-			)
-		);
-		$this-> client-> setUserAgent('Revmsg/Mobilize');
-		$cookiePlugin = new CookiePlugin(new ArrayCookieJar());
-		$this-> client-> addSubscriber($cookiePlugin);
+			);
+			$this-> client-> setUserAgent('Revmsg/Mobilize');
+			$cookiePlugin = new CookiePlugin(new ArrayCookieJar());
+			$this-> client-> addSubscriber($cookiePlugin);
+			}
+			if (is_string($signifier))
+				define('REVMSG_KEY', $signifier)
+		}
 	}	
 }
 ?>

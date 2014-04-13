@@ -1,5 +1,6 @@
 <?php
-namespace Revmsg\Mobilize\Model;
+namespace Revmsg\Mobilize
+
 interface model				{
 	public function setVariable	($name, $val);
 	public function setVariables	($set);
@@ -78,6 +79,7 @@ class	authentication extends scheme{
 		'password'	=>	null
 		);
 }
+
 class	metadata extends scheme{
 	protected $options	=	array(
 		'status'	=>	array(
