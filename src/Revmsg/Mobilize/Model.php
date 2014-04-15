@@ -1,5 +1,5 @@
 <?php
-namespace Revmsg\Mobilize
+namespace Revmsg\Mobilize\Model
 
 interface model				{
 	public function setVariable	($name, $val);
@@ -50,15 +50,15 @@ class scheme implements model	{
 	}
 }
 
-class	impersonate extends scheme {
+/*class	Impersonate extends scheme {
 	protected $options	=	array();
 	protected $vars		=	array(
 		'id'			=>	null,
 		'name'			=>	null
 		);
-}
+}*/
 
-class	sublist extends scheme	{
+class	Sublist extends scheme	{
 	protected $options	=	array();
 	protected $vars		=	array(
 		'id'			=>	null,
@@ -72,7 +72,7 @@ class	sublist extends scheme	{
 		);
 }
 
-class	authentication extends scheme{
+class	Authentication extends scheme{
 	protected $options	=	array();
 	protected $vars		=	array(
 		'username'	=>	null,
@@ -80,7 +80,7 @@ class	authentication extends scheme{
 		);
 }
 
-class	metadata extends scheme{
+class	Metadata extends scheme{
 	protected $options	=	array(
 		'status'	=>	array(
 			'ACTIVE',
@@ -104,7 +104,7 @@ class	metadata extends scheme{
 		'group'		=>	null  
 	);
 }
-class	filter extends scheme{
+class	Filter extends scheme{
 	protected $options	=	array(); //needs options
 	protected $vars		=	array(
 		'id'			=>	null,
@@ -116,7 +116,7 @@ class	filter extends scheme{
 		'lists'			=>	null
 		);
 }
-class	subscriber extends scheme{
+class	Subscriber extends scheme{
 	protected $options	=	array();
 	protected $vars		=	array(
 		'id'			=>	null,
@@ -128,7 +128,7 @@ class	subscriber extends scheme{
 }
 
 
-class metadataValue extends scheme	{
+class MetadataValue extends scheme	{
 	protected $options	=	array(
 		
 		);
@@ -141,7 +141,7 @@ class metadataValue extends scheme	{
 
 }
 
-class filterDetail extends scheme	{  
+class FilterDetail extends scheme	{  
 	protected $options	=	array(); //needs options
 	protected $vars			=	array( 
 		'value'			=>	null,

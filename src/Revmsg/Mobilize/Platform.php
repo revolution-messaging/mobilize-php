@@ -1,5 +1,6 @@
 <?php
-	class impersonate extends platformObject {
+namespace Revmsg\Mobilize\Platform
+	class Impersonate extends PlatformObject {
 	protected $scheme	=	'Revmsg\Mobilize\Model\impersonate';
 	protected $urls		=	array(
 		'v1'		=>	array(
@@ -9,7 +10,7 @@
 		);
 }
 	
-class sublist extends platformObject{
+class Sublist extends PlatformObject{
 	protected $scheme	=	'Revmsg\Mobilize\Model\sublist';
 	protected $urls		=	array(
 		'v1'		=>	array(
@@ -23,7 +24,7 @@ class sublist extends platformObject{
 	
 }
 
-class subscriber extends platformObject{
+class Subscriber extends PlatformObject{
 	public $scheme		=	'Revmsg\Mobilize\Model\subscriber';
 	protected $urls		=	array(
 		'v1'		=>	array(
@@ -34,7 +35,7 @@ class subscriber extends platformObject{
 		);
 }
 
-class metadata extends platformObject	{
+class Metadata extends PlatformObject	{
 	public $scheme		=	'Revmsg\Mobilize\Model\metadata';
 	protected $urls		=	array(
 		'v1'		=>	array(
@@ -50,7 +51,7 @@ class metadata extends platformObject	{
 	
 }
 
-class filter extends platformObject	{  
+class filter extends PlatformObject	{  
 	public $scheme		=	'Revmsg\Mobilize\Model\filter';
 	protected $urls		=	array(
 		'v1'		=>	array(
@@ -66,7 +67,7 @@ class filter extends platformObject	{
 		);
 }
 
-class authentication extends platformObject	{
+class authentication extends PlatformObject	{
 	public $client		=	null;
 	public $model		=	null;
 	protected $impersonate	=	null;

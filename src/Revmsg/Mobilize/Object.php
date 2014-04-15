@@ -1,15 +1,16 @@
 <?php
-namespace Revmsg\Mobilize
+namespace Revmsg\Mobilize\Object
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Cookie\CookiePlugin;
 use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Revmsg\Mobilize\Model;
-interface object			{
+
+interface Object			{
 	public function isDirty		();
-	public function delete          ($version, $session);
-	public function retrieve        ($id, $version, $session);
-	public function update          ($version, $session);
-	public function create          ($version, $session);
+	public function delete      ($version, $session);
+	public function retrieve    ($id, $version, $session);
+	public function update      ($version, $session);
+	public function create      ($version, $session);
 	public function __construct	($signifier);
 	public function __set		($name,$value);
 	public function set		($name,$value);
