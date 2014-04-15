@@ -77,7 +77,7 @@
         "require": {
             "ext-curl": "*",
             "php": ">=5.3.3",
-            "symfony/event-dispatcher": ">=2.1"
+            "symfony/event-dispatcher": "~2.1"
         },
         "replace": {
             "guzzle/batch": "self.version",
