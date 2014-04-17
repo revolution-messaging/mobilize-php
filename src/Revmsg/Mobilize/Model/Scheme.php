@@ -3,7 +3,7 @@ namespace Revmsg\Mobilize\Model;
 
 class Scheme implements Model
 {
-    protected $isDirty = false;
+    protected $isDirty = true;
     
     public function isDirty()
     {
@@ -54,6 +54,8 @@ class Scheme implements Model
             return false;
         }
     }
+
+    // NEEDS A METHOD TO UNSET ALL FIELDS IN THE RESPONSE MODEL THAT ARE NOT IN THE REQUEST MODEL
     
     public function getOptions  ($name)
     {

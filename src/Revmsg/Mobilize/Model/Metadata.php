@@ -22,7 +22,7 @@ class Metadata extends scheme
         'eventUrl'  =>  null,
         'account'   =>  null,
         'multiValue'    =>  false,
-        'format'    =>  null,
+        'format'    =>  '.{1,160}',
         'group'     =>  null
     );
 }
