@@ -1,5 +1,5 @@
 <?php
-namespace Revmsg\Mobilize;
+namespace Revmsg\Mobilize\Object;
 
 interface Object
 {

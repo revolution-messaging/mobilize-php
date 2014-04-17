@@ -1,9 +1,9 @@
 <?php
-namespace Revmsg\Mobilize\Platform;
+namespace Revmsg\Mobilize;
 
-class Sublist extends PlatformObject
+class Sublist extends Object\PlatformObject
 {
-    protected $scheme    =    'Revmsg\Mobilize\Model\sublist';
+    protected $scheme    =    'Revmsg\Mobilize\Model\Sublist';
     protected $urls        =    array(
         'v1'        =>    array(
             'create'    =>    'v1/list',

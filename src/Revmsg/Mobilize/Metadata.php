@@ -1,9 +1,9 @@
 <?php
-namespace Revmsg\Mobilize\Platform;
+namespace Revmsg\Mobilize;
 
-class Metadata extends PlatformObject
+class Metadata extends Object\PlatformObject
 {
-    public $scheme        =    'Revmsg\Mobilize\Model\metadata';
+    public $scheme        =    'Revmsg\Mobilize\Model\Metadata';
     protected $urls        =    array(
         'v1'        =>    array(
             'retrieve'    =>    'v1/metadata',

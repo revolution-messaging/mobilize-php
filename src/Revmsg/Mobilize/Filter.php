@@ -1,9 +1,9 @@
 <?php
-namespace Revmsg\Mobilize\Platform;
+namespace Revmsg\Mobilize;
 
-class Filter extends PlatformObject
+class Filter extends Object\PlatformObject
 {
-    public $scheme        =    'Revmsg\Mobilize\Model\filter';
+    public $scheme        =    'Revmsg\Mobilize\Model\Filter';
     protected $urls        =    array(
         'v1'        =>    array(
             'retrieve'    =>    'v1/filter',

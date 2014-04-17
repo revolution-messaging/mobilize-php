@@ -1,9 +1,9 @@
 <?php
-namespace Revmsg\Mobilize\Platform;
+namespace Revmsg\Mobilize;
 
-class Impersonate extends PlatformObject
+class Impersonate extends Object\PlatformObject
 {
-    protected $scheme    =    'Revmsg\Mobilize\Model\impersonate';
+    protected $scheme    =    'Revmsg\Mobilize\Model\Impersonate';
     protected $urls        =    array(
         'v1'        =>    array(
             'create'    =>    'v1/impersonate',
