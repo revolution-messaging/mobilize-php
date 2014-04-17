@@ -162,6 +162,10 @@ class PlatformObject implements Object
     {
         $this-> model-> setVariable($name, $val);
     }
+    public function __get($name)
+    {
+        $this-> model-> getVariable($name);
+    }
     public function __construct($signifier = null)
     {
         $this->model = new $this->scheme;
