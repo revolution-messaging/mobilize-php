@@ -173,3 +173,19 @@ You may also authenticate each request to the Mobilize API separately by definin
 *`retrieve`
 *`update`
 *`delete` removes the metadata field and all data for that field on all subscribers
+
+###Metadata
+####Properties
+#####Standard Properties
+*`id`
+#####Object-Specific Properties
+|property        |type          |definition                                                       |Retrieve     |
+|----------------|--------------|-----------------------------------------------------------------|-------------|
+|blacklist       |array         |array elements are shortcode IDs the subscriber is blacklisted on|ignored      |          
+|mobilePhoneNo   |numeric string|the subscriber's phone number in international format            |ignored      |           
+|subscriberMetaData|array       |metadata on the subscriber's record                              |ignored      | 
+|listDetails     |array         |lists the subscriber is on                                       |ignored      | 
+
+####Methods
+#####Standard Methods
+*`retrieve`
