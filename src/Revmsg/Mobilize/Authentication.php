@@ -82,7 +82,7 @@ class Authentication extends \Revmsg\Mobilize\Object\PlatformObject
                 $this-> client-> addSubscriber($cookiePlugin);
             }
             if (is_string($signifier)) {
-                    define('REVMSG_KEY', $signifier);
+                    define('REVMSG_MOBILIZE_KEY', $signifier);
             }
         }
     }

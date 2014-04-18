@@ -22,14 +22,14 @@ class PlatformObject implements Object
             if (!is_null($session)) {
                 $request = $session()->create($this-> urls[$version]['create'].'/'.$this-> model->getVariable('name'));
                 $response = $request-> send();
-            } elseif (defined('REVMSG_KEY')) {
+            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
                 $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
                 $request = $client->post(
                     $this-> urls[$version]['create'].'/'.$this->model->getVariable('id'),
                     array(
                         'Accept' => 'application/json',
                         'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_KEY
+                        'Authorization' => REVMSG_MOBILIZE_KEY
                         ),
                     json_encode(
                         $this->model->buildPayload()
@@ -60,14 +60,14 @@ class PlatformObject implements Object
             if (!is_null($session)) {
                 $request    =    $session()-> retrieve($this-> urls[$version]['retrieve'].'/'.$this-> model->getVariable('id'));
                 $response    =    $request-> send();
-            } elseif (defined('REVMSG_KEY')) {
+            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
                 $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
                 $request = $client->get(
                     $this-> urls[$version]['retrieve'].'/'.$this->model->getVariable('id'),
                     array(
                         'Accept'        =>    'application/json',
                         'Content-Type'    =>    'application/json',
-                        'Authorization'    =>    REVMSG_KEY
+                        'Authorization'    =>    REVMSG_MOBILIZE_KEY
                         )
                 );
                 $response = $request->send();
@@ -92,14 +92,14 @@ class PlatformObject implements Object
             if (!is_null($session)) {
                 $request = $session()->create($this-> urls[$version]['update'].'/'.$this-> model->getVariable('name'));
                 $response = $request-> send();
-            } elseif (defined('REVMSG_KEY')) {
+            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
                 $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
                 $request = $client->put(
                     $this-> urls[$version]['update'].'/'.$this->model->getVariable('id'),
                     array(
                         'Accept' => 'application/json',
                         'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_KEY
+                        'Authorization' => REVMSG_MOBILIZE_KEY
                         ),
                     json_encode(
                         $this->model->buildPayload()
@@ -126,14 +126,14 @@ class PlatformObject implements Object
             if (!is_null($session)) {
                 $request = $session()->create($this-> urls[$version]['delete'].'/'.$this-> model->getVariable('name'));
                 $response = $request-> send();
-            } elseif (defined('REVMSG_KEY')) {
+            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
                 $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
                 $request = $client->delete(
                     $this-> urls[$version]['delete'].'/'.$this->model->getVariable('id'),
                     array(
                         'Accept' => 'application/json',
                         'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_KEY
+                        'Authorization' => REVMSG_MOBILIZE_KEY
                         )
                 );
                 $response = $request->send();

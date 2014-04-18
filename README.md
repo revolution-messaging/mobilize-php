@@ -69,7 +69,7 @@ Mobilize's Dynamic Content flow component sends a data payload to a given URL an
 
 ##Mobilize API Wrapper
 
-This wrapper allows for the manipulation of objects in the Mobilize platform directly, and requires authentication credentials for the platform in order to function. Contact info@revolutionmessaging.com to inquire about messaging plans.
+This wrapper allows for the manipulation of objects in the Mobilize platform directly, and requires authentication credentials for the platform in order to function. Contact info@revolutionmessaging.com to inquire about messaging plans and to obtain credentials.
 
 ###General use
 Every type of object in the Mobilize platform is represented by a separate class, and instances of these classes may all be handled independantly. Objects may be instantiated in any of three ways:
@@ -80,16 +80,46 @@ Properties of objects may be changed as follows:
 * `$object->property = value`: set property of the object to value, provided value is valid and property exists.
 * `$object->setVariables(array)`: set all values of the object to match those in the array
 * `$object->set(property,value)`: set property of the object to value, provided value is valid and property exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
-Most objects have methods corresponding to CRUD operations, where supported (more to come):
+
+Platform objects have methods corresponding to standard CRUD (create, retrieve, update, delete) operations where applicable. Except where otherwise noted below, these methods work as follows:
+*`object->create($version='v1', $session)` creates an object on the Mobilize platform that matches the properties of your local object.
+*`object->retrieve($objectId $version='v1', $session)` Updates your local object to match the properties of the existing object with $objectId on the platform.
+*`object->update($version='v1', $session)` alters your local object's counterpart on the platform to match its local properties. Note that this method requires the object's id property to match the one on the platform.
+*`object->delete($version='v1', $session)` removes the object on the Mobilize platform that matches the id property of your local object. The local object is preserved.
+
+In all CRUD methods, $version defaults to 'v1' but may be changed to utilize a later version of Mobilize API. $session is an optional parameter for use with session authentication; if ommitted, the method attempts to use the value of constant REVMSG_MOBILIZE_KEY as an API key. 
 
 ###Authentication
-The first step in using the API is creating an authenticated session. 
+There are two ways to authenticate calls to the Mobilize platform: authenticate the session, or authenticate each request. For an application that will be used for multiple users, session authentication is best; if you are building an application that will use the same credentials every time, using an API key is best.
+
+#####Session Authentication
+To create a session, instantiate the Authentication class and call its create() method. You can set your username and password at instantiation or afterward
 ```
-use Revmsg\Mobilize
-$session = new Object\authentication();
+$session = new Authentication();
 $session->set('username',username)->set('password',password)->create();
 ```
-This session will be passed to methods defined in other classes.
+or
+```
+$session = new Authentication(
+    array(
+        'username' => 'username',
+        'password' => 'password'
+    )
+);
+$session->create();
+```
+You will need to pass the session into subsequent operations.
+
+#####API Key Authentication
+You may also authenticate each request to the Mobilize API separately by defining the constant REVMSG_MOBILIZE_KEY as a valid Mobilize API key. This constant is used for any API request that does not include a session.
+
+#####Methods
+
+######Retrieve
+`$session->retrieve($version, $session)` provides the user information corresponding to the active session, if present or the active API key, if set.
+
+#####Delete
+`$session->delete($version, $session)` logs out the active session.
 
 ###Lists
 ###Metadata
