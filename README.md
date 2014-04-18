@@ -76,11 +76,25 @@ Every type of object in the Mobilize platform is represented by a separate class
 * `new object();`: Create an empty object locally
 * `new object(string);`: Pull an object from Mobilize with an ID matching the given string
 * `new object(array);`: Create an object locally whose properties match those in the array
-Properties of objects may be changed as follows:
+####Standard Properties
+Many objects share similar properties; though these are not shared by all, where they do appear, all of the following properties have similar definitions. The following table describes these properties and how they are used in each of the standard methods:
+
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|id              |24-digit hexadecimal string |the object's ID in the Platform                  |ignored    |required     |ignored    |required |
+|status          |text (ACTIVE*, INACTIVE)    |determines whether the object is viewable to users |mandatory, unique  |ignored    |ignored   |ignored     |
+|shortCode       |24-digit hexadecimal string |the SMS short code to which the object belongs   |ignored    |ignored    |  |ignored    |
+|group           |24-digit hexadecimal string |the permissions group to which the object belongs|ignored    |ignored    |ignored      |ignored    |
+|account         |24-digit hexadecimal string |the master account to which the object belongs   |ignored    |ignored    |ignored      |ignored    |
+|createdBy       |24-digit hexadecimal string |the user ID of the object's creator              |ignored    |ignored    |ignored      |ignored    |
+
+Properties of objects may be accessed and changed as follows:
 * `$object->property = value`: set property of the object to value, provided value is valid and property exists.
 * `$object->setVariables(array)`: set all values of the object to match those in the array
 * `$object->set(property,value)`: set property of the object to value, provided value is valid and property exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
+* `print $object`: using the object as a string produces a JSON representation of its properties
 
+####Standard Methods
 Platform objects have methods corresponding to standard CRUD (create, retrieve, update, delete) operations where applicable. Except where otherwise noted below, these methods work as follows:
 *`object->create($version='v1', $session)` creates an object on the Mobilize platform that matches the properties of your local object.
 *`object->retrieve($objectId $version='v1', $session)` Updates your local object to match the properties of the existing object with $objectId on the platform.
@@ -109,19 +123,53 @@ $session = new Authentication(
 $session->create();
 ```
 You will need to pass the session into subsequent operations.
-
 #####API Key Authentication
 You may also authenticate each request to the Mobilize API separately by defining the constant REVMSG_MOBILIZE_KEY as a valid Mobilize API key. This constant is used for any API request that does not include a session.
-
 #####Methods
-
 ######Retrieve
 `$session->retrieve($version, $session)` provides the user information corresponding to the active session, if present or the active API key, if set.
-
 #####Delete
 `$session->delete($version, $session)` logs out the active session.
-
 ###Lists
+####Properties
+#####Standard Properties
+`id`
+`shortCode`
+`status`
+`name`
+`group`
+
+#####Object-Specific Properties
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|noOfSubscribers |integer|                     |the number of mobile lines subscribed to the list|ignored    |ignored    |ignored   |ignored |
+
+####Methods
+#####Standard Methods
+*`create`
+*`retrieve`
+*`update`
+*`delete` removes the list and disassosciates all subscribers from it
+
 ###Metadata
+####Properties
+#####Standard Properties
+`id`
+`status`
+`name`
+`group`
+#####Object-Specific Properties
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|validValues     |array  |the list of values the field will allow          |           |ignored      |           | ignored |
+|scope |string (GROUP*, ACCOUNT, SYSTEM)|determines the visibility & writability of this field for other permissions groups|ignored |ignored|ignored|ignored|
+|eventUrl |string (url)|a webservice URL that should be requested any time a value of this field is changed|ignored|ignored||ignored|
+|multiValue |boolean (false)*|when set to true, the field acts as an array on the platform|required |ignored|    |ignored|
+|format |regular expression (default: .{1,160})|all data passed to this field must match this regular expression|required |ignored|    |ignored|
 
-
+####Methods
+#####Standard Methods
+*`create`
+*`retrieve`
+*`update`
+*`delete` removes the metadata field and all data for that field on all subscribers
