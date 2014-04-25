@@ -32,6 +32,8 @@ class Scheme implements Model
     {
         if (key_exists($name, $this-> vars)) {
             return $this-> vars[$name];
+        } else {
+            return false;
         }
     }
     
@@ -39,24 +41,7 @@ class Scheme implements Model
     {
         return $this-> vars;
     }
-
-    public function buildPayload    ()
-    {
-        $payload = array();
-        foreach ($this->vars as $name => $val) {
-            if (!empty($val)) {
-                $payload[$name] = $val;
-            }
-        }
-        if (!empty($payload)) {
-            return($payload);
-        } else {
-            return false;
-        }
-    }
-
-    // NEEDS A METHOD TO UNSET ALL FIELDS IN THE RESPONSE MODEL THAT ARE NOT IN THE REQUEST MODEL
-    
+        
     public function getOptions  ($name)
     {
         if (key_exists($name, $this-> options)) {

@@ -9,143 +9,194 @@ namespace Revmsg\Mobilize\Object;
 class PlatformObject implements Object
 {
     protected $model        =    null;
+    protected $client = null;
+    protected $map = array(
+        'v1' => array(
+            'create' => array(
+                'url' => '',
+                'method' => 'POST',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        )
+                    )
+                ),
+            'retrieve' => array(
+                'url' => '',
+                'method' => 'GET',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            'update' => array(
+                'url' => '',
+                'method' => 'PUT',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            'delete' => array(
+                'url' => '',
+                'method' => 'DELETE',
+                'dirty' => true,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            ),
+        'v2' => array(
+            'create' => array(
+                'url' => '',
+                'method' => 'PUT',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            'retrieve' => array(
+                'url' => '',
+                'method' => 'GET',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            'update' => array(
+                'url' => '',
+                'method' => 'POST',
+                'dirty' => false,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            'delete' => array(
+                'url' => '',
+                'method' => 'DELETE',
+                'dirty' => true,
+                'payload' => array(
+                    'required' => array(
+                        ),
+                    'ignored' => array(
+                        ),
+                    'url' => array(
+                        'id'
+                        )
+                    )
+                ),
+            )
+        );
     public function isDirty()
     {
         return $this->model->isDirty();
     }
     public function create ($version = 'v1', $session = null)
     {
-        $this-> isDirty    =    false;
-        if (!isset($this-> urls[$version]['create'])) {
-            throw new Exception('object cannot be created');
-        } else {
-            if (!is_null($session)) {
-                $request = $session()->create($this-> urls[$version]['create'].'/'.$this-> model->getVariable('name'));
-                $response = $request-> send();
-            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
-                $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
-                $request = $client->post(
-                    $this-> urls[$version]['create'].'/'.$this->model->getVariable('id'),
-                    array(
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_MOBILIZE_KEY
-                        ),
-                    json_encode(
-                        $this->model->buildPayload()
-                    )
-                );
-                $response = $request->send();
-            } else {
-                throw new Exception("API key or active session required.");
-            }
-            if ($response->getStatusCode() < 400) {
-                    $this->model->dirtify(false);
-                    $this->model->setVariables(json_decode($response->getBody(), true));
-                    return $this;
-            } else {
-                    throw new Exception($response-> getStatusCode().': '.$response-> getBody());
-                    return false;
-            }
-        }
+        return $this-> operation('create', $version, $session);
     }
     public function retrieve    ($objectId = null, $version = 'v1', $session = null)
     {
-        if (!is_null($objectId) && is_string($objectId)) {
+        if (!empty($objectId)) {
             $this->id = $objectId;
         }
-        if (!isset($this-> urls[$version]['retrieve'])) {
-            throw new \Exception('object cannot be retrieved');
-        } else {
-            if (!is_null($session)) {
-                $request    =    $session()-> retrieve($this-> urls[$version]['retrieve'].'/'.$this-> model->getVariable('id'));
-                $response    =    $request-> send();
-            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
-                $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
-                $request = $client->get(
-                    $this-> urls[$version]['retrieve'].'/'.$this->model->getVariable('id'),
-                    array(
-                        'Accept'        =>    'application/json',
-                        'Content-Type'    =>    'application/json',
-                        'Authorization'    =>    REVMSG_MOBILIZE_KEY
-                        )
-                );
-                $response = $request->send();
-            } else {
-                throw new Exception("API key or active session required.");
-            }
-            if ($response->getStatusCode() < 400) {
-                    $this->model->dirtify();
-                    $this->model->setVariables(json_decode($response->getBody(), true));
-                    return $this;
-            } else {
-                    throw new Exception($response-> getStatusCode().': '.$response-> getBody());
-                    return false;
-            }
-        }
+        return $this-> operation('retrieve', $version, $session);
     }
     public function update        ($version = 'v1', $session = null)
     {
-        if (!isset($this-> urls[$version]['update'])) {
-            throw new Exception('object cannot be updated');
-        } else {
-            if (!is_null($session)) {
-                $request = $session()->create($this-> urls[$version]['update'].'/'.$this-> model->getVariable('name'));
-                $response = $request-> send();
-            } elseif (defined('REVMSG_MOBILIZE_KEY')) {
-                $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
-                $request = $client->put(
-                    $this-> urls[$version]['update'].'/'.$this->model->getVariable('id'),
-                    array(
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_MOBILIZE_KEY
-                        ),
-                    json_encode(
-                        $this->model->buildPayload()
-                    )
-                );
-                $response = $request->send();
-            } else {
-                throw new Exception("API key or active session required.");
-            }
-            if ($response-> getStatusCode() < 400) {
-                    $this->model->dirtify(false);
-                    return $this;
-            } else {
-                throw new Exception($response-> getStatusCode().': '.$response-> getBody());
-                return false;
-            }
-        }
+        return $this-> operation('update', $version, $session);
     }
     public function delete ($version = 'v1', $session = null)
     {
-        if (!isset($this-> urls[$version]['delete'])) {
-            throw new Exception('object cannot be deleted');
+        return $this-> operation('delete', $version, $session);
+    }
+    public function operation($operation, $version = 'v1', $session = null)
+    {
+        if (!isset($this->map[$version]) && !isset($this->map[$version][$operation])) {
+            throw new Exception(get_class($this)." objects do not have the $operation method in $version API");
         } else {
             if (!is_null($session)) {
-                $request = $session()->create($this-> urls[$version]['delete'].'/'.$this-> model->getVariable('name'));
-                $response = $request-> send();
+               /* $request = $session()->create($this-> urls[$version]['create'].'/'.$this-> model->getVariable('name'));
+                $response = $request-> send();*/
             } elseif (defined('REVMSG_MOBILIZE_KEY')) {
-                $client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
-                $request = $client->delete(
-                    $this-> urls[$version]['delete'].'/'.$this->model->getVariable('id'),
+                if (empty($this->client)) {
+                    $this->client = new \Guzzle\Http\Client(
+                        array(
+                            'base_url' => 'https://revolutionmsg.com/api/'
+                            )
+                    );
+                }
+                $request = $this->client->createRequest(
+                    $this->map[$version][$operation]['method'],
+                    $this->buildUrl($operation, $version),
                     array(
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json',
-                        'Authorization' => REVMSG_MOBILIZE_KEY
+                            'Accept' => 'application/json',
+                            'Content-Type' => 'application/json',
+                            'Authorization' => REVMSG_MOBILIZE_KEY
+                        ),
+                    $this->buildPayload($operation, $version),
+                    array(
+                        'exceptions' =>false
                         )
                 );
-                $response = $request->send();
+                try {
+                    $response = $this->client->send($request);
+                    if ($response->getStatusCode() > 300) {
+                        $body =
+                        'Response: '.$response->getBody().
+                        ' URL: '.$request->getUrl().
+                        ' Method: '.$request->getMethod();
+                        throw new \Exception($body);
+                    } elseif ($response->getBody()) {
+                        $this->model->setVariables($response->json());
+                    } else {
+
+                    }
+                    return $this;
+                } catch (Exception $e) {
+                    echo $e;
+                }
+                
             } else {
-                throw new Exception("API key or active session required.");
-            }
-            if ($response-> getStatusCode() < 400) {
-                $this->model->dirtify(true);
-                return $this;
-            } else {
-                throw new Exception($response-> getStatusCode().': '.$response-> getBody());
-                return false;
+                throw new \Exception("API key or active session required.");
             }
         }
     }
@@ -153,6 +204,39 @@ class PlatformObject implements Object
     {
         $this-> model-> setVariable($name, $val);
         return $this;
+    }
+    private function buildUrl ($operation, $version = 'v1')
+    {
+        $args = array(
+            $this->map[$version][$operation]['url']
+            );
+        if (isset($this->map[$version][$operation]['payload']['url'])) {
+            foreach ($this->map[$version][$operation]['payload']['url'] as $property) {
+                if ($this->model->getVariable($property)) {
+                    $args[] = $this->model->getVariable($property);
+                } else {
+                    throw new \Exception($operation.' ('.$version.') requires the \''.$property.'\'property to be set.');
+                }
+                
+            }
+        }
+        return call_user_func_array('sprintf', $args);
+    }
+    private function buildPayload ($operation, $version = 'v1')
+    {
+        if (in_array($this->map[$version][$operation]['method'], array('POST', 'PUT'))) {
+            $payload = $this->model->getVariables();
+            foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
+                if (empty($payload[$property])) {
+                    throw new \Exception($property." required");
+                }
+            }
+            foreach ($this->map[$version][$operation]['payload']['ignored'] as $index => $property) {
+                unset($payload[$property]);
+            }
+            return json_encode($payload);
+        }
+        return false;
     }
     public function __toString()
     {
@@ -175,6 +259,19 @@ class PlatformObject implements Object
             } elseif (is_string($signifier)) {
                 $this-> retrieve($signifier);
             }
+        }
+        $this->client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
+        foreach ($this->map as $version => $operations) {
+            if (empty($this->customMap[$version])) {
+                unset($this->map[$version]);
+            }
+            foreach ($operations as $operation => $parameter) {
+                if (!isset($this->customMap[$version][$operation])) {
+                    unset($this->map[$version][$operation]);
+                }
+            }
+            $this->map = array_replace_recursive($this->map, $this->customMap);
+
         }
         return $this;
     }
