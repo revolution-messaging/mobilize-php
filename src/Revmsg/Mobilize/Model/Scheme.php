@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class Scheme implements Model
+class Scheme implements ModelInterface
 {
     protected $isDirty = true;
     
@@ -42,13 +42,13 @@ class Scheme implements Model
         return $this-> vars;
     }
         
-    public function getOptions  ($name)
+    /*public function getOptions  ($name)
     {
         if (key_exists($name, $this-> options)) {
             return $this-> options[$name];
         }
     }
-
+*/
     public function dirtify ($dirty = true)
     {
         $this->isDirty = $dirty;

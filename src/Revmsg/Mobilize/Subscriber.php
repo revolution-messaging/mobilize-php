@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize;
 
-class Subscriber extends Object\PlatformObject
+class Subscriber extends Entity\Entity
 {
     protected $scheme = '\Revmsg\Mobilize\Model\Subscriber';
     protected $customMap = array(

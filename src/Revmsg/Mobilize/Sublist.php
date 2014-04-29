@@ -1,9 +1,9 @@
 <?php
 namespace Revmsg\Mobilize;
 
-class Sublist extends Object\PlatformObject
+class Sublist extends Entity\Entity
 {
-    protected $scheme    =    'Revmsg\Mobilize\Model\Sublist';
+    protected $scheme = 'Revmsg\Mobilize\Model\Sublist';
     protected $customMap = array(
         'v1' => array(
             'create' => array(

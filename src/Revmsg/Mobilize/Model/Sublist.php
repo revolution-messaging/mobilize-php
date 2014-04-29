@@ -1,7 +1,8 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class   Sublist extends scheme  {
+class Sublist extends scheme
+{
     protected $options  =   array();
     protected $vars     =   array(
         'id'            =>  null,
@@ -13,5 +14,4 @@ class   Sublist extends scheme  {
         'group'         =>  null,
         'noOfSubscribers'   =>  null
         );
-    // NEEDS TO SPECIFY WHICH FIELDS IN $vars ARE IN RESPONSE MODEL BUT NOT IN REQUEST MODEL
 }
