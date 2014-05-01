@@ -12,7 +12,7 @@ class Scheme implements ModelInterface
     
     public function setVariable ($name, $val)
     {
-        if (key_exists($name, $this-> vars) && (!key_exists($name, $this-> options) || in_array($val, $this-> options[$name]))) {
+        if (key_exists($name, $this-> vars)) {
             $this-> vars[$name] = $val;
             $this-> isDirty = true;
             return true;
@@ -42,13 +42,6 @@ class Scheme implements ModelInterface
         return $this-> vars;
     }
         
-    /*public function getOptions  ($name)
-    {
-        if (key_exists($name, $this-> options)) {
-            return $this-> options[$name];
-        }
-    }
-*/
     public function dirtify ($dirty = true)
     {
         $this->isDirty = $dirty;

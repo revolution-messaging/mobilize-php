@@ -4,6 +4,12 @@ namespace Revmsg\Mobilize\Entity;
 
 class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
 {
+    protected $model = null;
+    protected $client = null;
+    protected $map = array(
+        'v1' => array(),
+        'v2' => array()
+        );
     public function __construct($signifier = null)
     {
         $this->model = new $this->scheme;
@@ -19,11 +25,14 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
             if (empty($this->customMap[$version])) {
                 unset($this->map[$version]);
             }
-            foreach ($operations as $operation => $parameter) {
-                if (!isset($this->customMap[$version][$operation])) {
-                    unset($this->map[$version][$operation]);
+            if (!empty($operations)) {
+                foreach ($operations as $operation => $parameter) {
+                    if (!isset($this->customMap[$version][$operation])) {
+                        unset($this->map[$version][$operation]);
+                    }
                 }
             }
+
             $this->map = array_replace_recursive($this->map, $this->customMap);
 
         }
@@ -55,7 +64,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                         ),
                     $this->buildPayload($operation, $version),
                     array(
-                        'exceptions' =>false
+                        'exceptions' =>false,
+                        'query' => $this->buildQuery($operation, $version)
                         )
                 );
                 try {
@@ -80,14 +90,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                 throw new \Exception("API key or active session required.");
             }
         }
-    }
-    public function retrieve    ($objectId = null, $version = 'v1', $session = null)
-    {
-        if (!empty($objectId)) {
-            $this->id = $objectId;
-        }
-        return $this-> operation('retrieve', $version, $session);
-    }
+    }   
     protected function buildUrl ($operation, $version = 'v1')
     {
         $args = array(
@@ -121,6 +124,18 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
         }
         return false;
     }
+    protected function buildQuery ($operation, $version = 'v1')
+    {
+        $payload = array();
+        if (isset($this->map[$version][$operation]['payload']['query'])) {
+            foreach ($this->map[$version][$operation]['payload']['query'] as $index => $property) {
+                if ($this->model->getVariable($property)) {
+                    $payload[$property] = ($this->model->getVariable($property));
+                }
+            }
+        }
+        return $payload;
+    }
     public function __toString()
     {
         return json_encode($this->model->getVariables());
@@ -128,5 +143,14 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     public function __get($name)
     {
         $this-> model-> getVariable($name);
+    }
+    public function set($name, $val)
+    {
+        $this-> model-> setVariable($name, $val);
+        return $this;
+    }
+    public function __set($name, $val)
+    {
+        $this-> model-> setVariable($name, $val);
     }
 }

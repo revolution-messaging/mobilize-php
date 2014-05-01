@@ -3,7 +3,6 @@ namespace Revmsg\Mobilize\Model;
 
 class Sublist extends scheme
 {
-    protected $options  =   array();
     protected $vars     =   array(
         'id'            =>  null,
         'shortCode'     =>  null,

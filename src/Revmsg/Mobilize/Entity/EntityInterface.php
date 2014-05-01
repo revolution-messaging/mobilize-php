@@ -11,4 +11,5 @@ interface EntityInterface extends ObjectInterface
     public function __set($name, $value);
     public function set($name, $value);
     public function __toString();
+    public function retrieve($EntityId, $version, $session);
 }
