@@ -9,4 +9,5 @@ interface PageInterface extends ObjectInterface
     public function flipTo($index);
     public function all();
     public function fetch();
+    public function findArray($property, $value, $index = 0);
 }

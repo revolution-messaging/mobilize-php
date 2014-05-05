@@ -6,13 +6,6 @@ class Collection extends Entity\Object implements Entity\CollectionInterface
 {
     protected $scheme = 'Revmsg\Mobilize\Model\Collection';
     protected $customMap = array();
-    
-    /*public function __construct($content)
-    {
-        foreach ($content as $item) {
-            $this->model->content[] = $item;
-        }
-    }*/
     public function filter($property, $value, $operator = 'eq')
     {
         $output = array();
@@ -83,13 +76,10 @@ class Collection extends Entity\Object implements Entity\CollectionInterface
         $this->model->setVariable('collection', $output);
         return $this;
     }
-    public function findOne($property, $value, $strict = true)
+    public function findArray($property, $value, $index = 0)
     {
         $this->filter($property, $value, 'eq');
-        if (count($this->model->getVariable('collection')) == 1 || $strict == false) {
-            return $this->model->getVariable('collection')[0];
-        } else {
-            throw new \Exception('more than one entity matches criteria. narrow filter or use loose matching.');
-        }
+        $output = $this->getVariable('collection');
+        return $output[$index];
     }
 }

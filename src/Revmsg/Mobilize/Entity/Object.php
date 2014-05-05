@@ -13,13 +13,6 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     public function __construct($signifier = null)
     {
         $this->model = new $this->scheme;
-        if (!empty($signifier)) {
-            if (is_array($signifier)) {
-                $this-> model-> setVariables($signifier);
-            } elseif (is_string($signifier)) {
-                $this-> retrieve($signifier);
-            }
-        }
         $this->client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
         foreach ($this->map as $version => $operations) {
             if (empty($this->customMap[$version])) {
@@ -32,10 +25,21 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                     }
                 }
             }
-
             $this->map = array_replace_recursive($this->map, $this->customMap);
-
         }
+        if (!empty($signifier)) {
+            if (is_array($signifier)) {
+                $this-> model-> setVariables($signifier);
+            } elseif (is_string($signifier)) {
+                if (strpos(get_class($this), 'Page')) {
+                    $this->element = $signifier;
+                    $this->fetch();
+                } else {
+                    $this-> retrieve($signifier);
+                }
+            }
+        }
+        
         return $this;
     }
     public function operation($operation, $version = 'v1', $session = null)
@@ -77,7 +81,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                         ' Method: '.$request->getMethod();
                         throw new \Exception($body);
                     } elseif ($response->getBody()) {
-                        $this->model->setVariables($response->json());
+                        $this->setVariables($response->json());
                     } else {
 
                     }
@@ -90,7 +94,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                 throw new \Exception("API key or active session required.");
             }
         }
-    }   
+    }
     protected function buildUrl ($operation, $version = 'v1')
     {
         $args = array(
@@ -98,8 +102,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
             );
         if (isset($this->map[$version][$operation]['payload']['url'])) {
             foreach ($this->map[$version][$operation]['payload']['url'] as $property) {
-                if ($this->model->getVariable($property)) {
-                    $args[] = $this->model->getVariable($property);
+                if ($this->getVariable($property)) {
+                    $args[] = $this->getVariable($property);
                 } else {
                     throw new \Exception($operation.' ('.$version.') requires the \''.$property.'\'property to be set.');
                 }
@@ -111,7 +115,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     protected function buildPayload ($operation, $version = 'v1')
     {
         if (in_array($this->map[$version][$operation]['method'], array('POST', 'PUT'))) {
-            $payload = $this->model->getVariables();
+            $payload = $this->getVariables();
             foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
                 if (empty($payload[$property])) {
                     throw new \Exception($property." required");
@@ -129,8 +133,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
         $payload = array();
         if (isset($this->map[$version][$operation]['payload']['query'])) {
             foreach ($this->map[$version][$operation]['payload']['query'] as $index => $property) {
-                if ($this->model->getVariable($property)) {
-                    $payload[$property] = ($this->model->getVariable($property));
+                if ($this->getVariable($property)) {
+                    $payload[$property] = ($this->getVariable($property));
                 }
             }
         }
@@ -138,19 +142,27 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     }
     public function __toString()
     {
-        return json_encode($this->model->getVariables());
+        return json_encode($this->getVariables());
     }
     public function __get($name)
     {
-        $this-> model-> getVariable($name);
+        $this->getVariable($name);
     }
     public function set($name, $val)
     {
-        $this-> model-> setVariable($name, $val);
+        $this->setVariable($name, $val);
         return $this;
     }
     public function __set($name, $val)
     {
-        $this-> model-> setVariable($name, $val);
+        $this->setVariable($name, $val);
+    }
+    public function __call($method, $args)
+    {
+        if (method_exists($this->model, $method)) {
+            return call_user_func_array(array($this->model, $method), $args);
+        } else {
+            throw new \Exception('Tried to call unknown method '.$method);
+        }
     }
 }

@@ -12,4 +12,12 @@ class Page extends Scheme
         'orderBy' => '',
         'element' => ''
         );
+    public function collect()
+    {
+        return new \Revmsg\Mobilize\Collection(
+            array(
+                'collection' => $this->getVariable('collection')
+                )
+        );
+    }
 }

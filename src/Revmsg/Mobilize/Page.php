@@ -4,7 +4,6 @@ namespace Revmsg\Mobilize;
 class Page extends Entity\Object implements Entity\PageInterface
 {
     protected $scheme = 'Revmsg\Mobilize\Model\Page';
-    public $collection = null;
     protected $customMap = array(
         'v1' => array(
             'fetch' => array(
@@ -34,37 +33,38 @@ class Page extends Entity\Object implements Entity\PageInterface
     {
         $this->size = $size;
         $this->fetch();
-
+        return $this;
     }
     public function flipTo($index)
     {
         $this->page = $index;
         $this->fetch();
+        return $this;
     }
     public function all()
     {
-        $this->model->setVariable('size', $this->model->getVariable('total'));
-        $this->model->setVariable('page', '1');
-        $this->fetch();
+        if ($this->getVariable('size') != $this->total) {
+            $this->setVariable('size', $this->model->getVariable('total'));
+            $this->setVariable('page', '1');
+            $this->fetch();
+        }
         return $this;
     }
-    // public function __toString()
-    // {
-    //     return json_encode(
-    //         $output = $this->model->getVariables();
-    //         );
-    // }
-    
     public function fetch()
     {
         $this->operation('fetch');
-        $this->collection = new Collection(
-            array(
-                'collection' => $this->model->getVariable(
-                    'collection'
-                )
-            )
-        );
         return $this;
+    }
+    public function filter($name, $value)
+    {
+        if (empty($this->collection)) {
+            $this->fetch();
+        }
+        return $this->all()->collect()->filter($name, $value);
+    }
+    public function findArray($property, $value, $index = 0)
+    {
+        $output = $this->filter($property, $value, 'eq')->findArray($property, $value, $index);
+        return $output;
     }
 }
