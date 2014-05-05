@@ -3,7 +3,7 @@
     "description": "libraries for working with Revolution Messaging's Mobilize API",
     "keywords": [],
     "homepage": "https://github.com/revolution-messaging/mobilize-php",
-    "license": "Copyright",
+    "license": "proprietary",
     "minimum-stability": "dev",
     "authors": [
       {
@@ -14,10 +14,11 @@
     ],
     "require": {
       "php": ">=5.3.0",
-      "guzzle/guzzle": ">=4.0"
+       "guzzlehttp/guzzle": "4.*"
     },
     "autoload": {
         "psr-0": {
             "Revmsg": "src/"
         }
+      }
 }
