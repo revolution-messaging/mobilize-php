@@ -1,7 +1,8 @@
 #About the Mobilize Library
 
 PHP client library for the Mobilize SMS application from Revolution Messaging, LLC.
-This library consists of two classes: MobilizeAPI, a general-purpose class for interacting with the Mobilize messaging API, and MobilizeHook, for the creation of PHP scripts designed to work with Mobilize's web hooks. These two classes are often used together, though neither depends on the other.
+
+This library comes in two parts: the MobilizeHook Class, used to build webservices to receieve requests from the Mobilize platform, and the Mobilize API library, for using the API directly. These two parts do not depend on one another, but are often used in tandem.
 
 ##The Revmsg\Mobilize\Hook Class
 
@@ -69,3 +70,126 @@ Mobilize's Dynamic Content flow component sends a data payload to a given URL an
 * `getResponse()`: Returns the value of `response`
 * `setResponse(string)`: Sets the value of `response`
 * `output()`: Returns a properly-formatted Dynamic Content object, specifying endSession and response (response will be truncated to the last full word before reaching the set responseLength).
+
+##Mobilize API Wrapper
+
+This wrapper allows for the manipulation of objects in the Mobilize platform directly, and requires authentication credentials for the platform in order to function. Contact info@revolutionmessaging.com to inquire about messaging plans and to obtain credentials.
+
+###General use
+Every type of object in the Mobilize platform is represented by a separate class, and instances of these classes may all be handled independantly. Objects may be instantiated in any of three ways:
+* `new object();`: Create an empty object locally
+* `new object(string);`: Pull an object from Mobilize with an ID matching the given string
+* `new object(array);`: Create an object locally whose properties match those in the array
+####Standard Properties
+Many objects share similar properties; though these are not shared by all, where they do appear, all of the following properties have similar definitions. The following table describes these properties and how they are used in each of the standard methods:
+
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|id              |24-digit hexadecimal string |the object's ID in the Platform                  |ignored    |required     |ignored    |required |
+|status          |text (ACTIVE*, INACTIVE)    |determines whether the object is viewable to users |mandatory, unique  |ignored    |ignored   |ignored     |
+|shortCode       |24-digit hexadecimal string |the SMS short code to which the object belongs   |ignored    |ignored    |  |ignored    |
+|group           |24-digit hexadecimal string |the permissions group to which the object belongs|ignored    |ignored    |ignored      |ignored    |
+|account         |24-digit hexadecimal string |the master account to which the object belongs   |ignored    |ignored    |ignored      |ignored    |
+|createdBy       |24-digit hexadecimal string |the user ID of the object's creator              |ignored    |ignored    |ignored      |ignored    |
+
+Properties of objects may be accessed and changed as follows:
+* `$object->property = value`: set property of the object to value, provided value is valid and property exists.
+* `$object->setVariables(array)`: set all values of the object to match those in the array
+* `$object->set(property,value)`: set property of the object to value, provided value is valid and property exists. This method returns the object itself when successful, so it may be chained to set multiple values at once or used with other methods.
+* `print $object`: using the object as a string produces a JSON representation of its properties
+
+####Standard Methods
+Platform objects have methods corresponding to standard CRUD (create, retrieve, update, delete) operations where applicable. Except where otherwise noted below, these methods work as follows:
+*`object->create($version='v1', $session)` creates an object on the Mobilize platform that matches the properties of your local object.
+*`object->retrieve($objectId $version='v1', $session)` Updates your local object to match the properties of the existing object with $objectId on the platform.
+*`object->update($version='v1', $session)` alters your local object's counterpart on the platform to match its local properties. Note that this method requires the object's id property to match the one on the platform.
+*`object->delete($version='v1', $session)` removes the object on the Mobilize platform that matches the id property of your local object. The local object is preserved.
+
+In all CRUD methods, $version defaults to 'v1' but may be changed to utilize a later version of Mobilize API. $session is an optional parameter for use with session authentication; if ommitted, the method attempts to use the value of constant REVMSG_MOBILIZE_KEY as an API key. 
+
+###Authentication
+There are two ways to authenticate calls to the Mobilize platform: authenticate the session, or authenticate each request. For an application that will be used for multiple users, session authentication is best; if you are building an application that will use the same credentials every time, using an API key is best.
+
+#####Session Authentication
+To create a session, instantiate the Authentication class and call its create() method. You can set your username and password at instantiation or afterward
+```
+$session = new Authentication();
+$session->set('username',username)->set('password',password)->create();
+```
+or
+```
+$session = new Authentication(
+    array(
+        'username' => 'username',
+        'password' => 'password'
+    )
+);
+$session->create();
+```
+You will need to pass the session into subsequent operations.
+#####API Key Authentication
+You may also authenticate each request to the Mobilize API separately by defining the constant REVMSG_MOBILIZE_KEY as a valid Mobilize API key. This constant is used for any API request that does not include a session.
+#####Methods
+######Retrieve
+`$session->retrieve($version, $session)` provides the user information corresponding to the active session, if present or the active API key, if set.
+#####Delete
+`$session->delete($version, $session)` logs out the active session.
+###Lists
+####Properties
+#####Standard Properties
+`id`
+`shortCode`
+`status`
+`name`
+`group`
+
+#####Object-Specific Properties
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|noOfSubscribers |integer|                     |the number of mobile lines subscribed to the list|ignored    |ignored    |ignored   |ignored |
+
+####Methods
+#####Standard Methods
+*`create`
+*`retrieve`
+*`update`
+*`delete` removes the list and disassosciates all subscribers from it
+
+###Metadata
+####Properties
+#####Standard Properties
+`id`
+`status`
+`name`
+`group`
+#####Object-Specific Properties
+|property        |type   |definition                                       |Create     |Retrieve     |Update     |Delete   |
+|----------------|-------|-------------------------------------------------|-----------|-------------|-----------|---------|
+|validValues     |array  |the list of values the field will allow          |           |ignored      |           | ignored |
+|scope |string (GROUP*, ACCOUNT, SYSTEM)|determines the visibility & writability of this field for other permissions groups|ignored |ignored|ignored|ignored|
+|eventUrl |string (url)|a webservice URL that should be requested any time a value of this field is changed|ignored|ignored||ignored|
+|multiValue |boolean (false)*|when set to true, the field acts as an array on the platform|required |ignored|    |ignored|
+|format |regular expression (default: .{1,160})|all data passed to this field must match this regular expression|required |ignored|    |ignored|
+
+####Methods
+#####Standard Methods
+*`create`
+*`retrieve`
+*`update`
+*`delete` removes the metadata field and all data for that field on all subscribers
+
+###Metadata
+####Properties
+#####Standard Properties
+*`id`
+#####Object-Specific Properties
+|property        |type          |definition                                                       |Retrieve     |
+|----------------|--------------|-----------------------------------------------------------------|-------------|
+|blacklist       |array         |array elements are shortcode IDs the subscriber is blacklisted on|ignored      |          
+|mobilePhoneNo   |numeric string|the subscriber's phone number in international format            |ignored      |           
+|subscriberMetaData|array       |metadata on the subscriber's record                              |ignored      | 
+|listDetails     |array         |lists the subscriber is on                                       |ignored      | 
+
+####Methods
+#####Standard Methods
+*`retrieve`
