@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class Sublist extends scheme
+class Sublist extends Scheme
 {
     protected $vars     =   array(
         'id'            =>  null,

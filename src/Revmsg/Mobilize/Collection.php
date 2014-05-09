@@ -80,6 +80,12 @@ class Collection extends Entity\Object implements Entity\CollectionInterface
     {
         $this->filter($property, $value, 'eq');
         $output = $this->getVariable('collection');
-        return $output[$index];
+        if (!empty($output)) {
+            return $output[$index];
+        } else {
+            return false;
+        }
+        
+        
     }
 }
