@@ -1,13 +1,15 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class   Subscriber extends Scheme{
+class Subscriber extends scheme
+{
     protected $options  =   array();
     protected $vars     =   array(
         'id'            =>  null,
         'blacklist'     =>  array(),
         'mobilePhoneNo'     =>  null,
         'subscriberMetaData'    =>  array(),
-        'listDetails'       =>  array()
+        'listDetails'       =>  array(),
+        'metadataAPIModel' => array()
         );
 }

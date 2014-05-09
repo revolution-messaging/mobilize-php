@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize;
 
-class Authentication extends \Revmsg\Mobilize\Entity\Entity
+class Authentication extends Entity\Entity
 {
     public $client = null;
     public $model = null;

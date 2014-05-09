@@ -44,8 +44,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     }
     public function operation($operation, $version = 'v1', $session = null)
     {
-        if (!isset($this->map[$version]) && !isset($this->map[$version][$operation])) {
-            throw new Exception(get_class($this)." objects do not have the $operation method in $version API");
+        if (!isset($this->map[$version]) || !isset($this->map[$version][$operation])) {
+            throw new \Exception(get_class($this)." objects do not have the $operation method in $version API");
         } else {
             if (!is_null($session)) {
                /* $request = $session()->create($this-> urls[$version]['create'].'/'.$this-> model->getVariable('name'));
@@ -115,14 +115,22 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     protected function buildPayload ($operation, $version = 'v1')
     {
         if (in_array($this->map[$version][$operation]['method'], array('POST', 'PUT'))) {
-            $payload = $this->getVariables();
-            foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
-                if (empty($payload[$property])) {
-                    throw new \Exception($property." required");
+            if (!isset($this->map[$version][$operation]['payload']['model'])) {
+                $payload = $this->getVariables();
+                foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
+                    if (empty($payload[$property])) {
+                        throw new \Exception($property." required");
+                    }
                 }
-            }
-            foreach ($this->map[$version][$operation]['payload']['ignored'] as $index => $property) {
-                unset($payload[$property]);
+                foreach ($this->map[$version][$operation]['payload']['ignored'] as $index => $property) {
+                    unset($payload[$property]);
+                }
+            } else {
+                foreach ($this->getVariable($this->map[$version][$operation]['payload']['model']) as $prop => $val) {
+                    if (!empty($val)) {
+                        $payload[$prop] = $val;
+                    }
+                }
             }
             return json_encode($payload);
         }
