@@ -76,16 +76,24 @@ class Collection extends Entity\Object implements Entity\CollectionInterface
         $this->model->setVariable('collection', $output);
         return $this;
     }
-    public function findArray($property, $value, $index = 0)
+
+    public function toArray($index = null)
     {
-        $this->filter($property, $value, 'eq');
         $output = $this->getVariable('collection');
         if (!empty($output)) {
-            return $output[$index];
+            if ($index === null) {
+                return $output;
+            } else {
+                return $output[$index];
+            }
         } else {
             return false;
         }
-        
-        
+    }
+
+    public function findArray($property, $value, $index = 0)
+    {
+        $this->filter($property, $value, 'eq');
+        return $this->toArray($index);
     }
 }
