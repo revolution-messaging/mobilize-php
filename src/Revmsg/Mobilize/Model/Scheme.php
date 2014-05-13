@@ -37,9 +37,19 @@ class Scheme implements ModelInterface
         }
     }
     
-    public function getVariables    ()
+    public function getVariables ()
     {
-        return $this-> vars;
+        return $this->vars;
+    }
+
+    public function getModel ($model)
+    {
+        return $this->APIModels[$model];
+    }
+
+    public function setModel ($model, $args)
+    {
+        $this->APIModels[$model] = $args;
     }
         
     public function dirtify ($dirty = true)

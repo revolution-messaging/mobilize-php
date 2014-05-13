@@ -127,7 +127,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                     unset($payload[$property]);
                 }
             } else {
-                foreach ($this->getVariable($this->map[$version][$operation]['payload']['model']) as $prop => $val) {
+                foreach ($this->getModel($this->map[$version][$operation]['payload']['model']) as $prop => $val) {
                     if (!empty($val)) {
                         $payload[$prop] = $val;
                     }

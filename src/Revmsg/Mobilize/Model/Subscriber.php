@@ -10,6 +10,9 @@ class Subscriber extends Scheme
         'mobilePhoneNo'     =>  null,
         'subscriberMetaData'    =>  array(),
         'listDetails'       =>  array(),
-        'metadataAPIModel' => array()
+        );
+    protected $APIModels = array(
+        'MetadataAPIModel' => array(),
+        'SubscribersAndList' => array()
         );
 }

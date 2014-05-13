@@ -132,14 +132,14 @@ class Entity extends Object implements \Revmsg\Mobilize\Entity\EntityInterface
     {
         return $this-> operation('create', $version, $session);
     }
-    public function retrieve    ($objectId = null, $version = 'v1', $session = null)
+    public function retrieve ($objectId = null, $version = 'v1', $session = null)
     {
         if (!empty($objectId)) {
             $this->id = $objectId;
         }
         return $this-> operation('retrieve', $version, $session);
     }
-    public function update        ($version = 'v1', $session = null)
+    public function update ($version = 'v1', $session = null)
     {
         return $this-> operation('update', $version, $session);
     }
@@ -147,5 +147,4 @@ class Entity extends Object implements \Revmsg\Mobilize\Entity\EntityInterface
     {
         return $this-> operation('delete', $version, $session);
     }
-    
 }
