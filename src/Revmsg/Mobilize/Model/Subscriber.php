@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class Subscriber extends scheme
+class Subscriber extends Scheme
 {
     protected $options  =   array();
     protected $vars     =   array(

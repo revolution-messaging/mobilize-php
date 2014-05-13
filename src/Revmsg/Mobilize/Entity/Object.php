@@ -78,7 +78,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                         $body =
                         'Response: '.$response->getBody().
                         ' URL: '.$request->getUrl().
-                        ' Method: '.$request->getMethod();
+                        ' Method: '.$request->getMethod().
+                        ' Payload: '.$this->buildPayload($operation, $version);
                         throw new \Exception($body);
                     } elseif ($response->getBody()) {
                         $this->setVariables($response->json());

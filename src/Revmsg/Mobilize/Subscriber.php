@@ -1,4 +1,5 @@
 <?php
+
 namespace Revmsg\Mobilize;
 
 class Subscriber extends Entity\Entity
@@ -27,6 +28,18 @@ class Subscriber extends Entity\Entity
                         'id'
                         ),
                     'model' => 'metadataAPIModel'
+                    )
+                )
+            ),
+        'v2' => array(
+            'addToList' => array(
+                'url' => '',
+                'method' => 'PUT',
+                'payload' => array(
+                    'url' => array(
+                        'id',
+                        'listId'
+                        )
                     )
                 )
             )

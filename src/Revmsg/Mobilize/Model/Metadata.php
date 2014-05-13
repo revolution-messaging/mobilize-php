@@ -1,7 +1,7 @@
 <?php
 namespace Revmsg\Mobilize\Model;
 
-class Metadata extends scheme
+class Metadata extends Scheme
 {
     protected $vars     =   array(
         'id'            =>  null,
