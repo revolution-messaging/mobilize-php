@@ -40,7 +40,7 @@ class Subscriber extends Entity\Entity
             ),
         'v2' => array(
             'addToList' => array(
-                'url' => '',
+                'url' => '/api/v2/subscriber/%s/list/%s',
                 'method' => 'PUT',
                 'payload' => array(
                     'url' => array(
@@ -77,6 +77,13 @@ class Subscriber extends Entity\Entity
         }
         $this->setModel('SubscribersAndList', $model);
         $this->operation('unsubscribe');
-        var_dump($this->getModel('SubscribersAndList'));
+    }
+    public function addToList ($list)
+    {
+        if (is_object($list) && strpos(get_class($list), 'Sublist')) {
+            $list = $list->getVariable('id');
+        }
+        $this->setVariable('listId', $list);
+        $this->operation('addToList', 'v2');
     }
 }

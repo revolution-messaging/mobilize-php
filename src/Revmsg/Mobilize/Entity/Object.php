@@ -118,14 +118,19 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
         if (in_array($this->map[$version][$operation]['method'], array('POST', 'PUT'))) {
             if (!isset($this->map[$version][$operation]['payload']['model'])) {
                 $payload = $this->getVariables();
-                foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
-                    if (empty($payload[$property])) {
-                        throw new \Exception($property." required");
+                if (isset($this->map[$version][$operation]['payload']['required'])) {
+                    foreach ($this->map[$version][$operation]['payload']['required'] as $index => $property) {
+                        if (empty($payload[$property])) {
+                            throw new \Exception($property." required");
+                        }
                     }
                 }
-                foreach ($this->map[$version][$operation]['payload']['ignored'] as $index => $property) {
-                    unset($payload[$property]);
+                if (isset($this->map[$version][$operation]['payload']['ignored'])) {
+                    foreach ($this->map[$version][$operation]['payload']['ignored'] as $index => $property) {
+                        unset($payload[$property]);
+                    }
                 }
+                
             } else {
                 foreach ($this->getModel($this->map[$version][$operation]['payload']['model']) as $prop => $val) {
                     if (!empty($val)) {
