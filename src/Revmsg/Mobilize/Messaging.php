@@ -11,7 +11,7 @@ class Messaging extends Entity\Entity
                 'url' => '/api/v1/messaging/sendContent',
                 'method' => 'POST',
                 'payload' => array(
-                    'model' => 'messagingAPIModel',
+                    'model' => 'MessagingAPIModel',
                     )
                 ),
             'sendBroadcast' => array(
@@ -26,4 +26,9 @@ class Messaging extends Entity\Entity
                 )
             )
         );
+    public function sendContent ($model)
+    {
+        $this->setModel('MessagingAPIModel', $model);
+        $this->operation('sendContent');
+    }
 }

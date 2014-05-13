@@ -4,8 +4,9 @@ namespace Revmsg\Mobilize\Model;
 
 class Messaging extends Scheme
 {
-    protected $vars = array(
-        'messagingAPIModel' => array(
+    protected $vars = array();
+    protected $APIModels = array(
+        'MessagingAPIModel' => array(
             'campaign' => '',
             'filteredLists' => array(),
             'frequency' => '',

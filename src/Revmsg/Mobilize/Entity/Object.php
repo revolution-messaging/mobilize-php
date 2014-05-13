@@ -130,7 +130,6 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                         unset($payload[$property]);
                     }
                 }
-                
             } else {
                 foreach ($this->getModel($this->map[$version][$operation]['payload']['model']) as $prop => $val) {
                     if (!empty($val)) {
