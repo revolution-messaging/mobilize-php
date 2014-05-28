@@ -27,113 +27,143 @@ class Hook
         'metadataId' => '',
         'oldValue' => array(),
         'newValue' => ''
-    ); 
+    );
 
-    public function __construct($format='xml', $method='post', $retrieve=true, $responseLength=160) {
+    public function __construct($format = 'xml', $method = 'post', $retrieve = true, $responseLength = 160)
+    {
         $this->setFormat($format);
         $this->setMethod($method);
         $this->setResponseLength($responseLength);
-        if($retrieve)
+        if ($retrieve) {
             $this->retrieveInputs();
+        }
     }
 
-    private function textTruncate($text, $numb) {
-        if(strlen($text) > $numb) {
+    public function __toString()
+    {
+        return json_encode($this->getInputs());
+    }
+
+    private function textTruncate($text, $numb)
+    {
+        if (strlen($text) > $numb) {
             $text = substr($text, 0, $numb);
             $text = substr($text, 0, strrpos($text, " "));
             $etc = null;
             $text = $text.$etc;
         }
-        return $text; 
+        return $text;
     }
 
-    public function cleanMobileText($keyword=null,$mobileText=null) {
-        if (is_null($keyword))
+    public function cleanMobileText($keyword = null, $mobileText = null)
+    {
+        if (is_null($keyword)) {
             $keyword = $this->inputs['keywordName'];
-        if (is_null($mobileText))
+        }
+        if (is_null($mobileText)) {
             $mobileText = $this->inputs['mobileText'];
-        return trim(preg_replace('/^('.$keyword.'\s)/i','',$mobileText));
+        }
+
+        return trim(preg_replace('/^('.$keyword.'\s)/i', '', $mobileText));
     }
 
-    public function getMethod() {
+    public function cleanMsisdn()
+    {
+        return "(".substr($this->inputs['msisdn'], 3, 3).") ".substr($this->inputs['msisdn'], 6, 3)."-".substr($this->inputs['msisdn'],9);
+    }
+
+    public function getMethod()
+    {
         return $this->method;
     }
 
-    public function setMethod($method='post') {
+    public function setMethod($method = 'post')
+    {
         $method = trim(strtolower($method));
-        if($method=='get' || $method=='post') {
+        if ($method == 'get' || $method == 'post') {
             $this->method = $method;
             return true;
-        } else
+        } else {
             throw new Exception('You must specify "get" or "post".');
+        }
     }
 
-    public function getFormat() {
+    public function getFormat()
+    {
         return $this->format;
     }
 
-    public function setFormat($format='xml') {
+    public function setFormat($format = 'xml')
+    {
         $format = trim(strtolower($format));
-        if($format=='xml' || $format=='json') {
+        if ($format == 'xml' || $format == 'json') {
             $this->format = $format;
             return true;
-        } else
+        } else {
             throw new Exception('You must specify "xml" or "json".');
+        }
     }
 
-    public function getEnd() {
+    public function getEnd()
+    {
         return $this->endSession;
     }
 
-    public function setEnd($end=true) {
-        if($end) {
+    public function setEnd($end = true)
+    {
+        if ($end) {
             $this->endSession = true;
         } else {
             $this->endSession = false;
         }
     }
 
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
-    public function setResponse($message, $force=false) {
-        if(strlen($message)>$this->responseLength && !$force) {
+    public function setResponse($message, $force = false)
+    {
+        if (strlen($message) > $this->responseLength && !$force) {
             return false;
         } else {
             $this->response = $message;
         }
     }
 
-    public function retrieveInputs($method=null) {
-        if($method) $this->setMethod($method);
-        switch ($this->getMethod()) {
-            case 'get':
-                if(isset($_GET) && !empty($_GET))
-                    return $this->setInputs($_GET);
-                break;
-            case 'post':
-            default:
-                $d = file_get_contents('php://input');
-                if($d) {
-                    switch ($this->format) {
-                        case 'json':
-                            try {
-                                $d = json_decode($d, true);
-                            } catch(Exception $e) {
-                                throw new Exception($e->getMessage());
-                            }
-                            break;
-                        case 'xml':
-                        default:
-                            try {
-                                $d = new SimpleXMLElement($d);
-                            } catch(Exception $e) {
-                                throw new Exception($e->getMessage());
-                            }
-                    }
+    public function retrieveInputs($method = null)
+    {
+        if ($method) {
+            $this->setMethod($method);
+        }
+    switch ($this->getMethod()) {
+    case 'get':
+        if(isset($_GET) && !empty($_GET))
+            return $this->setInputs($_GET);
+        break;
+    case 'post':
+    default:
+        $d = file_get_contents('php://input');
+        if($d) {
+            switch ($this->format) {
+                case 'json':
+                    try {
+                        $d = json_decode($d, true);
+                    } catch(Exception $e) {
+                        throw new Exception($e->getMessage());
                 }
-                return $this->setInputs($d);
+                break;
+            case 'xml':
+            default:
+                try {
+                    $d = new SimpleXMLElement($d);
+                } catch(Exception $e) {
+                                    throw new Exception($e->getMessage());
+                                }
+                        }
+                    }
+                    return $this->setInputs($d);
         }
     }
 
