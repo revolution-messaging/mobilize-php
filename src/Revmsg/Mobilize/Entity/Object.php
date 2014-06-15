@@ -10,7 +10,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
         'v1' => array(),
         'v2' => array()
         );
-    public function __construct($signifier = null)
+    public function __construct($signifier = null, $type = null)
     {
         $this->model = new $this->scheme;
         $this->client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
@@ -33,11 +33,15 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
             } elseif (is_string($signifier)) {
                 if (strpos(get_class($this), 'Page')) {
                     $this->element = $signifier;
+                    if (!empty($type)) {
+                        $this->setVariable('type', $type);
+                    }
                     $this->fetch();
                 } else {
                     $this-> retrieve($signifier);
                 }
             }
+
         }
         
         return $this;

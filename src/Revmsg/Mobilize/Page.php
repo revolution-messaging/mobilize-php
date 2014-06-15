@@ -16,7 +16,8 @@ class Page extends Entity\Object implements Entity\PageInterface
                     'query' => array(
                         'orderBy',
                         'size',
-                        'page'
+                        'page',
+                        'type'
                         )
                     )
                 )

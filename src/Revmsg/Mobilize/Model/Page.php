@@ -10,7 +10,8 @@ class Page extends Scheme
         'size' => 15,
         'total' => 0,
         'orderBy' => '',
-        'element' => ''
+        'element' => '',
+        'type' => ''
         );
     public function collect()
     {
