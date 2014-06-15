@@ -64,7 +64,7 @@ class Hook
             $mobileText = $this->inputs['mobileText'];
         }
 
-        return trim(preg_replace('/^('.$keyword.'\s)/i', '', $mobileText));
+        return trim(preg_replace('/^('.$keyword.'\s*)/i', '', $mobileText));
     }
 
     public function cleanMsisdn()
