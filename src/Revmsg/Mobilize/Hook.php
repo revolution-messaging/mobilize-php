@@ -84,7 +84,7 @@ class Hook
             $this->method = $method;
             return true;
         } else {
-            throw new Exception('You must specify "get" or "post".');
+            throw new \Exception('You must specify "get" or "post".');
         }
     }
 
@@ -100,7 +100,7 @@ class Hook
             $this->format = $format;
             return true;
         } else {
-            throw new Exception('You must specify "xml" or "json".');
+            throw new \Exception('You must specify "xml" or "json".');
         }
     }
 
@@ -151,15 +151,15 @@ class Hook
                     try {
                         $d = json_decode($d, true);
                     } catch(Exception $e) {
-                        throw new Exception($e->getMessage());
+                        throw new \Exception($e->getMessage());
                 }
                 break;
             case 'xml':
             default:
                 try {
-                    $d = new SimpleXMLElement($d);
+                    $d = new \SimpleXMLElement($d);
                 } catch(Exception $e) {
-                                    throw new Exception($e->getMessage());
+                                    throw new \Exception($e->getMessage());
                                 }
                         }
                     }
