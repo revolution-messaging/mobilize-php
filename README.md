@@ -80,6 +80,7 @@ Every type of object in the Mobilize platform is represented by a separate class
 * `new object();`: Create an empty object locally
 * `new object(string);`: Pull an object from Mobilize with an ID matching the given string
 * `new object(array);`: Create an object locally whose properties match those in the array
+
 ####Standard Properties
 Many objects share similar properties; though these are not shared by all, where they do appear, all of the following properties have similar definitions. The following table describes these properties and how they are used in each of the standard methods:
 
@@ -100,10 +101,10 @@ Properties of objects may be accessed and changed as follows:
 
 ####Standard Methods
 Platform objects have methods corresponding to standard CRUD (create, retrieve, update, delete) operations where applicable. Except where otherwise noted below, these methods work as follows:
-*`object->create($version='v1', $session)` creates an object on the Mobilize platform that matches the properties of your local object.
-*`object->retrieve($objectId $version='v1', $session)` Updates your local object to match the properties of the existing object with $objectId on the platform.
-*`object->update($version='v1', $session)` alters your local object's counterpart on the platform to match its local properties. Note that this method requires the object's id property to match the one on the platform.
-*`object->delete($version='v1', $session)` removes the object on the Mobilize platform that matches the id property of your local object. The local object is preserved.
+* `object->create($version='v1', $session)` creates an object on the Mobilize platform that matches the properties of your local object.
+* `object->retrieve($objectId $version='v1', $session)` Updates your local object to match the properties of the existing object with $objectId on the platform.
+* `object->update($version='v1', $session)` alters your local object's counterpart on the platform to match its local properties. Note that this method requires the object's id property to match the one on the platform.
+* `object->delete($version='v1', $session)` removes the object on the Mobilize platform that matches the id property of your local object. The local object is preserved.
 
 In all CRUD methods, $version defaults to 'v1' but may be changed to utilize a later version of Mobilize API. $session is an optional parameter for use with session authentication; if ommitted, the method attempts to use the value of constant REVMSG_MOBILIZE_KEY as an API key. 
 
