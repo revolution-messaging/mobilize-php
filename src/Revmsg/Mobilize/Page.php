@@ -56,12 +56,12 @@ class Page extends Entity\Object implements Entity\PageInterface
         $this->operation('fetch');
         return $this;
     }
-    public function filter($name, $value)
+    public function filter($name, $value, $operator = null)
     {
         if (empty($this->collection)) {
             $this->fetch();
         }
-        return $this->all()->collect()->filter($name, $value);
+        return $this->all()->collect()->filter($name, $value, $operator);
     }
     public function findArray($property, $value, $index = 0)
     {
