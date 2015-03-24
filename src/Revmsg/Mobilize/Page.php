@@ -44,8 +44,8 @@ class Page extends Entity\Object implements Entity\PageInterface
     }
     public function all()
     {
-        if ($this->getVariable('size') != $this->total) {
-            $this->setVariable('size', $this->model->getVariable('total'));
+        if ($this->getVariable('size') != $this->getVariable('total')) {
+            $this->setVariable('size', $this->getVariable('total'));
             $this->setVariable('page', '1');
             $this->fetch();
         }
