@@ -73,7 +73,8 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                     $this->buildPayload($operation, $version),
                     array(
                         'exceptions' =>false,
-                        'query' => $this->buildQuery($operation, $version)
+                        'query' => $this->buildQuery($operation, $version)/*,
+'debug' => true*/
                         )
                 );
                 try {
