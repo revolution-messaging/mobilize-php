@@ -67,7 +67,7 @@ class Authentication extends Entity\Entity
             if (is_array($signifier)) {
                 $this-> model-> setVariables($signifier);
                 $this-> client = new \Guzzle\Http\Client(
-                    'http://revolutionmsg.com/api',
+                    'https://mobile.reverehq.com/api',
                     array(
                     'request.options' => array(
                         'headers' => array(

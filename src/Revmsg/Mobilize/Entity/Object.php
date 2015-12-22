@@ -13,7 +13,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
     public function __construct($signifier = null, $type = null)
     {
         $this->model = new $this->scheme;
-        $this->client = new \Guzzle\Http\Client('http://revolutionmsg.com/api');
+        $this->client = new \Guzzle\Http\Client('https://mobile.reverehq.com.com/api');
         foreach ($this->map as $version => $operations) {
             if (empty($this->customMap[$version])) {
                 unset($this->map[$version]);
@@ -58,7 +58,7 @@ class Object implements \Revmsg\Mobilize\Entity\ObjectInterface
                 if (empty($this->client)) {
                     $this->client = new \Guzzle\Http\Client(
                         array(
-                            'base_url' => 'https://revolutionmsg.com/api/'
+                            'base_url' => 'https://mobile.reverehq.com.com/api/'
                             )
                     );
                 }
